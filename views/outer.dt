@@ -1,0 +1,26 @@
+doctype html
+html.no-js(lang='')
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='x-ua-compatible', content='ie=edge')
+		title DLang Blog
+		meta(name='description', content='')
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		link(href='http://fonts.googleapis.com/css?family=Roboto:400italic,300,700,400&subset=cyrillic,cyrillic-ext,latin', rel='stylesheet', type='text/css')
+		link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', rel='stylesheet')
+		link(href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', rel='stylesheet')
+		link(href='/css/style.css', rel='stylesheet')
+	body
+		header.Header
+			.Capsule
+				a.home(href='/')
+					span.fa.fa-home
+				a.login(href='/login.html')
+					span.fa.fa-lock
+				.search
+					label.input
+						span.fa.fa-search
+						div
+							input(name='search', type='text')
+		!{ inner }
+		script(type='text/javascript', src='/js/mood.js')

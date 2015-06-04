@@ -1,0 +1,10 @@
+{
+	"name": "mood",
+	"description": "A simple vibe.d server application.",
+	"copyright": "Copyright © 2015, virtuall",
+	"authors": ["virtuall"],
+	"dependencies": {
+		"vibe-d": "~>0.7.19"
+	},
+	"versions": ["VibeDefaultMain"]
+}
