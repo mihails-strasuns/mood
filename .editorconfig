@@ -1,0 +1,9 @@
+root = true
+
+[*.{d,di,dd}]
+end_of_line = lf
+insert_final_newline = false
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+charset = utf-8
