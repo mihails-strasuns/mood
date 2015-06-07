@@ -1,3 +1,4 @@
-.dub/
-dub.selections.json
-mood
+/.dub/
+/dub.selections.json
+/mood
+.swp
