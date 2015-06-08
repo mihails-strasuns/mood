@@ -43,12 +43,13 @@ unittest
     static assert (!__traits(compiles, { cache.posts_by_url["key"] = "data"; }));
 
     // can build a new immutable cache instead
-    auto new_cache = cache.add("key", "data");
-    assert (new_cache.posts_by_url["key"] == "data");
+    auto new_cache = cache.add("key", "data1");
+    new_cache      = cache.add("key", "data2");
+    assert (new_cache.posts_by_url["key"] == "data2");
 
     // and replace old reference (uses be atomic operation)
     cache.replaceWith(new_cache);
-    assert (cache.posts_by_url["key"] == "data");
+    assert (cache.posts_by_url["key"] == "data2");
 }
 
 /**

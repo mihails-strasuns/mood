@@ -57,3 +57,21 @@ struct HTMLCache
         this.data.replaceWith(new_cache);
     }
 }
+
+unittest
+{
+    HTMLCache html;
+
+    html.render("/url", "# abcd");
+    assert (html.posts_by_url["/url"] == "<h1> abcd</h1>\n");
+
+    Cache md;
+    md.replaceWith(md.add("/block/1", "# a"));
+    md.replaceWith(md.add("/block/2", "## b"));
+    md.replaceWith(md.add("/block/3", "### c"));
+
+    html.render(md);
+    assert (html.posts_by_url["/block/1"] == "<h1> a</h1>\n");
+    assert (html.posts_by_url["/block/2"] == "<h2> b</h2>\n");
+    assert (html.posts_by_url["/block/3"] == "<h3> c</h3>\n");
+}

@@ -57,3 +57,13 @@ struct MarkdownCache
         this.html.render(this.md);
     }
 }
+
+unittest
+{
+    HTMLCache html;
+    auto md = MarkdownCache(html);
+
+    md.add("/url", "# abcd");
+    assert (md.posts_by_url["/url"] == "# abcd");
+    assert (html.posts_by_url["/url"] == "<h1> abcd</h1>\n");
+}
