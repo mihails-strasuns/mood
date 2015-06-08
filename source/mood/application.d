@@ -54,7 +54,7 @@ struct MoodApp
         logTrace("\t%s", app.html_cache.posts_by_url.keys.join("\n\t"));
 
         logInfo("Initializing Mood RESTful API");
-        this.api = new MoodAPI(this.md_cache, this.html_cache);
+        app.api = new MoodAPI(app.md_cache, app.html_cache);
 
         logInfo("Application data is ready");
         return app;
