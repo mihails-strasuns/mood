@@ -26,7 +26,7 @@ void main(string[] args)
     settings.bindAddresses = [ "::1", "127.0.0.1" ];
 
     auto router = new URLRouter;
-    router.registerRestInterface(app.initializeAPI());
+    router.registerRestInterface(app.API());
     router.get(MoodURLConfig.posts, &app.postHTML);
     router.get("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 

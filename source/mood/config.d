@@ -3,6 +3,9 @@
  */
 module mood.config;
 
+/**
+    Configuration for filesystem paths
+ */
 enum MoodPathConfig
 {
     statics         = "./static/",
@@ -10,6 +13,9 @@ enum MoodPathConfig
     articleHTML     = "./generated/html/",
 }
 
+/**
+    Configuration for URL paths
+ */
 enum MoodURLConfig
 {
     apiBase = "/api/",

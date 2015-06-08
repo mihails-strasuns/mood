@@ -1,12 +1,12 @@
 /**
+    REST API specification suitable for both server and client
  */
 module mood.api.spec;
 
 import vibe.web.rest;
 import mood.config;
 
-/**
- */
+///
 @rootPath(MoodURLConfig.apiBase)
 interface MoodAPI
 {

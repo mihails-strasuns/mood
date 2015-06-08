@@ -1,9 +1,11 @@
 /**
+    REST API implementation
  */
 module mood.api.implementation;
 
 import mood.api.spec;
 
+///
 class MoodAPI : mood.api.spec.MoodAPI
 {
     import std.array : appender;
@@ -31,6 +33,7 @@ class MoodAPI : mood.api.spec.MoodAPI
         string getPostSource(string _year, string _month, string _day, string _title)
         {
             // poor man's `format`, don't want to allocate new string each time
+            // TODO: fix Phobos formattedWrite
             this.buffer.length = 0;
             this.buffer ~= _year;
             this.buffer ~= "/";
