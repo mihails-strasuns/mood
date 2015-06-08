@@ -8,6 +8,7 @@ import mood.cache.html;
 unittest
 {
     import std.file;
+    import std.path;
     import vibe.inet.path;
 
     // env preparation
@@ -21,7 +22,7 @@ unittest
     write(test_dir ~ "url2/" ~ "article.md", "### x");
     mkdirRecurse(test_dir ~ "url3");
 
-    // tests
+    // most common workflow
 
     HTMLCache html;
     auto md = MarkdownCache(html);
@@ -33,5 +34,17 @@ unittest
 
     assert (html.posts_by_url["url1/nested/article"] == "<h1> a</h1>\n");
     assert (html.posts_by_url["url2/article"] == "<h3> x</h3>\n");
+    assert (html.posts_by_url.length == 2);
+
+    // missing cache dump on disk
+
+    md.loadFromDisk(Path("/unlikely/to/exist"));
+    assert (md.posts_by_url.length == 0);
+
+    // relative base path
+
+    auto relpath = Path(relativePath(test_dir, getcwd()));
+    md.loadFromDisk(relpath);
+    assert (md.posts_by_url.length == 2);
     assert (html.posts_by_url.length == 2);
 }

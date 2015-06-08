@@ -5,6 +5,6 @@
     "dependencies": {
         "vibe-d": "~>0.7.19"
     },
-    "mainSourceFile": "./source/app.d",
-    "versions": ["VibeDefaultMain"]
+    "mainSourceFile": "./source/mood/main.d",
+    "versions": ["VibeCustomMain"]
 }

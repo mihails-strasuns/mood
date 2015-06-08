@@ -102,14 +102,14 @@ struct CacheData
     static Cache loadFromDisk(Path root_path, string ext)
     {
         import std.file;
-        import std.path : relativePath;
+        import std.path : relativePath, absolutePath;
         import std.algorithm : endsWith;
 
-        auto root = root_path.toString();
-        if (root.length == 0)
-            return Cache(null);
-
+        auto root = absolutePath(root_path.toString());
         auto cache = new CacheData;
+
+        if (root.length == 0 || !exists(root))
+            return Cache(assumePayloadUnique(cache));
 
         foreach (DirEntry path; dirEntries(root, SpanMode.depth))
         {
