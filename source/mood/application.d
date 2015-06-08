@@ -10,6 +10,7 @@ struct MoodApp
     import mood.cache.md;
     import mood.cache.html;
     import mood.config;
+    import mood.api.implementation;
 
     private
     {
@@ -17,7 +18,7 @@ struct MoodApp
         HTMLCache     html_cache;
     }
 
-    // no default construction, use create() instead
+    // no default construction, use initialize() instead
     @disable this();
 
     /**
@@ -40,6 +41,13 @@ struct MoodApp
 
         logInfo("Application data is ready");
         return app;
+    }
+
+    /**
+     */
+    MoodAPI initializeAPI()
+    {
+        return new MoodAPI(this.md_cache, this.html_cache);
     }
 
     /**

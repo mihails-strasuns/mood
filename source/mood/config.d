@@ -12,6 +12,6 @@ enum MoodPathConfig
 
 enum MoodURLConfig
 {
-    postsPrefix    = "/posts/*",
-    rawPostsPrefix = "/posts_raw/*",
+    apiBase = "/api/",
+    posts   = "/posts/*",
 }

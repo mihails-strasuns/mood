@@ -9,13 +9,16 @@ import mood.application;
 
 import vibe.core.core;
 import vibe.core.log;
+
 import vibe.http.server;
 import vibe.http.router;
 import vibe.http.fileserver;
 
+import vibe.web.rest;
+
 void main(string[] args)
 {
-    // setLogLevel(LogLevel.trace);
+    setLogLevel(LogLevel.trace);
     auto app = MoodApp.initialize();
 
     auto settings = new HTTPServerSettings;
@@ -23,7 +26,8 @@ void main(string[] args)
     settings.bindAddresses = [ "::1", "127.0.0.1" ];
 
     auto router = new URLRouter;
-    router.get(MoodURLConfig.postsPrefix, &app.postHTML);
+    router.registerRestInterface(app.initializeAPI());
+    router.get(MoodURLConfig.posts, &app.postHTML);
     router.get("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 
     listenHTTP(settings, router);
