@@ -21,3 +21,13 @@ enum MoodURLConfig
     apiBase = "/api/",
     posts   = "/posts/*",
 }
+
+/**
+    Used to identify blog owner
+ */
+enum MoodAuthConfig
+{
+    user     = "please don't store me in git",
+    password = "please don't store me in git",
+    realm    = "please don't store me in git"
+}
