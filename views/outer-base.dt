@@ -22,5 +22,5 @@ html.no-js(lang='')
 						span.fa.fa-search
 						div
 							input(name='search', type='text')
-		!{ inner }
+		block inner
 		script(type='text/javascript', src='/js/mood.js')

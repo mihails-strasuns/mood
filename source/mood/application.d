@@ -87,7 +87,7 @@ struct MoodApp
             {
                 auto title = "Title";
                 auto content = *pcontent;
-                res.render!("content.dt", title, content);
+                res.render!("single_post.dt", title, content);
             }
         }
     }
