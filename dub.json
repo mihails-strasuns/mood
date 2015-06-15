@@ -3,7 +3,7 @@
     "description": "KISS blog service implementation tuned for programmers",
     "authors": ["virtuall", "Dicebot"],
     "dependencies": {
-        "vibe-d": "~>0.7.19"
+        "vibe-d": "~>0.7.23"
     },
     "mainSourceFile": "./source/mood/main.d",
     "versions": ["VibeCustomMain"]
