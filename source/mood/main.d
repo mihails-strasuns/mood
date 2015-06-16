@@ -18,7 +18,7 @@ import vibe.web.rest;
 
 void main(string[] args)
 {
-    setLogLevel(LogLevel.trace);
+    setLogLevel(LogLevel.info);
     auto app = MoodApp.initialize();
 
     auto settings = new HTTPServerSettings;

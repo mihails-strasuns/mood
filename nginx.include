@@ -1,0 +1,23 @@
+server {
+    listen       80;
+    server_name  blog.dicebot.lv;
+    charset      utf-8;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+    }
+}
+
+
+server {
+    listen       443 ssl;
+    server_name  blog.dicebot.lv;
+    charset      utf-8;
+
+    ssl_certificate      /home/dicebot/certs/blog.crt;
+    ssl_certificate_key  /home/dicebot/certs/blog.key;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+    }
+}
