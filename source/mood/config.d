@@ -11,6 +11,7 @@ enum MoodPathConfig
     statics         = "./static/",
     markdownSources = "./generated/md/",
     articleHTML     = "./generated/html/",
+    certificates    = "./certs/",
 }
 
 /**

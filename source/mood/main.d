@@ -23,7 +23,12 @@ void main(string[] args)
 
     auto settings = new HTTPServerSettings;
     settings.port = 8080;
+
+    import vibe.stream.ssl;
     settings.bindAddresses = [ "::1", "127.0.0.1" ];
+    settings.sslContext = createSSLContext(SSLContextKind.server);
+    settings.sslContext.useCertificateChainFile("certs/blog.crt");
+    settings.sslContext.usePrivateKeyFile("certs/blog.key");
 
     auto router = new URLRouter;
     // protected sections require authorization first before route fall-through
