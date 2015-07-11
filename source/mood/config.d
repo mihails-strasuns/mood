@@ -20,7 +20,8 @@ enum MoodPathConfig
 enum MoodURLConfig
 {
     apiBase = "/api/",
-    posts   = "/posts/*",
+    posts   = "/posts",
+    admin   = "/admin",
 }
 
 /**

@@ -91,4 +91,12 @@ struct MoodApp
             }
         }
     }
+
+    /**
+        Renders admin page for adding new blog post
+     */
+    void admin(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        res.render!("new_post.dt");
+    }
 }
