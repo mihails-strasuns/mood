@@ -38,13 +38,15 @@ void main(string[] args)
         (user, pwd) => user == MoodAuthConfig.user && pwd == MoodAuthConfig.password
     );
     router.any (MoodURLConfig.admin, auth_dg);
+    router.post(MoodURLConfig.posts, auth_dg);
     router.post(MoodURLConfig.apiBase ~ MoodURLConfig.posts, auth_dg);
 
     // "real" request handlers
     router.registerRestInterface(app.API());
-    router.get (MoodURLConfig.posts, &app.postHTML);
-    router.get (MoodURLConfig.admin, &app.admin);
-    router.get ("*", serveStaticFiles(Path(MoodPathConfig.statics)));
+    router.get  (MoodURLConfig.posts ~ "/*", &app.postHTML);
+    router.post (MoodURLConfig.posts, &app.addPost);
+    router.get  (MoodURLConfig.admin, &app.admin);
+    router.get  ("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 
     listenHTTP(settings, router);
     runEventLoop();

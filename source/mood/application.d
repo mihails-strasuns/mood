@@ -77,7 +77,7 @@ struct MoodApp
     void postHTML(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.regex;
-        static post_pattern = regex(r"\d{4}/\d{2}/\d{2}/.+$");
+        static post_pattern = regex(r"\d{4}/\d{2}/.+$");
 
         auto capture = matchFirst(req.path, post_pattern);
         if (!capture.empty)
@@ -89,7 +89,23 @@ struct MoodApp
                 auto content = *pcontent;
                 res.render!("single_post.dt", title, content);
             }
+            else
+                logTrace("Missing entry '%s' was requested", capture.hit);
         }
+    }
+
+    /**
+        Adds new post
+     */
+    void addPost(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        import std.exception : enforce;
+        auto title   = req.form["title"];
+        auto content = req.form["content"];
+        enforce(title.length != 0 && content.length != 0);
+
+        auto url = this.api.addPost(title, content).url;
+        res.redirect(MoodURLConfig.posts ~ "/" ~ url);
     }
 
     /**

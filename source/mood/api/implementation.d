@@ -80,7 +80,10 @@ class MoodAPI : mood.api.spec.MoodAPI
             string markdown = title ~ "\n==========\n\n" ~ content;
             writeFileUTF8(file, markdown);
 
-            return PostAddingResult("/" ~ prefix ~ "/" ~ processed_title ~ ".html");
+            auto url = prefix ~ "/" ~ processed_title;
+            this.md.add(url, markdown);
+
+            return PostAddingResult(url);
         }
 }
 
