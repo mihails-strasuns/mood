@@ -11,45 +11,63 @@ module mood.cache.core;
     This relies on the fact that posts are changed rarely but served often
     and allows no-lock implicit sharing of cache between worker threads.
  */
-struct Cache
+struct Cache(TEntry)
 {
     /// pointer to latest cached content
-    shared immutable(CacheData)* data = new CacheData;
+    shared immutable(CacheData!TEntry)* data = new CacheData!TEntry;
     alias data this;
 
     /// Updates cache pointer in a thread-safe manner
-    void replaceWith(Cache new_cache)
+    void replaceWith(Cache!TEntry new_cache)
     {
         this.replaceWith(new_cache.data);
     }
 
     /// ditto
-    void replaceWith(immutable(CacheData)* new_data)
+    void replaceWith(immutable(CacheData!TEntry)* new_data)
     {
         import core.atomic;
         atomicStore(this.data, new_data);
+    }
+
+    /// remove all entries
+    void clear()
+    {
+        import core.atomic;
+        atomicStore(this.data, new immutable CacheData!TEntry);
     }
 }
 
 ///
 unittest
 {
-    Cache cache;
+    struct DummyEntry
+    {
+        string data;
+        alias data this;
+
+        static DummyEntry create(string source)
+        {
+            return DummyEntry(source);
+        }
+    }
+
+    Cache!DummyEntry cache;
 
     // empty cache by default
-    assert (cache.posts_by_url.length == 0);
+    assert (cache.entries.length == 0);
 
     // can't modify data directly, immutable
-    static assert (!__traits(compiles, { cache.posts_by_url["key"] = "data"; }));
+    static assert (!__traits(compiles, { cache.entries["key"].data = "data"; }));
 
     // can build a new immutable cache instead
     auto new_cache = cache.add("key", "data1");
     new_cache      = cache.add("key", "data2");
-    assert (new_cache.posts_by_url["key"] == "data2");
+    assert (new_cache.entries["key"] == "data2");
 
     // and replace old reference (uses be atomic operation)
     cache.replaceWith(new_cache);
-    assert (cache.posts_by_url["key"] == "data2");
+    assert (cache.entries["key"] == "data2");
 }
 
 /**
@@ -57,12 +75,35 @@ unittest
 
     Supposed to be used via `Cache` alias.
  */
-struct CacheData
+struct CacheData(TEntry)
 {
+    static assert (is(typeof(TEntry.create(string.init)) == TEntry));
+
     import vibe.inet.path : Path;
 
     /// Mapping of relative URL (also relative file path on disk) to raw data
-    string[string] posts_by_url;
+    TEntry[string] entries;
+
+    /**
+        Builds new immutable cache with additional entry added
+
+        Params:
+            key = relative URL of the post this must be used as source for
+            data = new entry
+
+        Returns:
+            pointer to new immtable cache built on top of this one
+     */
+    Cache!TEntry add(string key, TEntry data) immutable
+    {
+        auto cache = new CacheData;
+        foreach (old_key, old_data; this.entries)
+            cache.entries[old_key] = old_data;
+        cache.entries[key] = data;
+
+        return Cache!TEntry(assumePayloadUnique(cache));
+    }
+
 
     /**
         Builds new immutable cache with additional entry added
@@ -74,14 +115,10 @@ struct CacheData
         Returns:
             pointer to new immtable cache built on top of this one
      */
-    Cache add(string key, string data) immutable
+    Cache!TEntry add(string key, string data) immutable
     {
-        auto cache = new CacheData;
-        foreach (old_key, old_data; this.posts_by_url)
-            cache.posts_by_url[old_key] = old_data;
-        cache.posts_by_url[key] = data;
-
-        return Cache(assumePayloadUnique(cache));
+        auto entry = TEntry.create(data);
+        return this.add(key, entry);
     }
 
     /**
@@ -99,7 +136,7 @@ struct CacheData
         Returns:
             pointer to immutable cache filled with data
      */
-    static Cache loadFromDisk(Path root_path, string ext)
+    static Cache!TEntry loadFromDisk(Path root_path, string ext)
     {
         import std.file;
         import std.path : relativePath, absolutePath;
@@ -109,18 +146,18 @@ struct CacheData
         auto cache = new CacheData;
 
         if (root.length == 0 || !exists(root))
-            return Cache(assumePayloadUnique(cache));
+            return Cache!TEntry(assumePayloadUnique(cache));
 
         foreach (DirEntry path; dirEntries(root, SpanMode.depth))
         {
             if (path.isFile && path.name.endsWith(ext))
             {
                 auto key = relativePath(path.name, root)[0 .. $ - ext.length];
-                cache.posts_by_url[key] = readText(path.name);
+                cache.entries[key] = TEntry.create(readText(path.name));
             }
         }
 
-        return Cache(assumePayloadUnique(cache));
+        return Cache!TEntry(assumePayloadUnique(cache));
     }
 }
 

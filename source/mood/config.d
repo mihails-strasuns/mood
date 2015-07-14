@@ -29,7 +29,7 @@ enum MoodURLConfig
  */
 enum MoodAuthConfig
 {
-    user     = "please don't store me in git",
-    password = "please don't store me in git",
+    user     = "aaa",
+    password = "bbb",
     realm    = "please don't store me in git"
 }

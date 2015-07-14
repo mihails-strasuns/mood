@@ -11,21 +11,18 @@ class MoodAPI : mood.api.spec.MoodAPI
     import vibe.http.common;
     import vibe.data.json;
 
-    import mood.cache.md;
-    import mood.cache.html;
+    import mood.cache.posts;
     import mood.config;
 
     private
     {
-        MarkdownCache*   md;
-        HTMLCache*       html;
-        char[]           buffer;
+        BlogPosts*   cache;
+        char[]       buffer;
     }
 
-    this (ref MarkdownCache md, ref HTMLCache html)
+    this (ref BlogPosts cache)
     {
-        this.md = &md;
-        this.html = &html;
+        this.cache = &cache;
     }
 
     override:
@@ -35,16 +32,17 @@ class MoodAPI : mood.api.spec.MoodAPI
             // poor man's `format`, don't want to allocate new string each time
             // TODO: fix Phobos formattedWrite
             this.buffer.length = 0;
+            assumeSafeAppend(this.buffer);
             this.buffer ~= _year;
             this.buffer ~= "/";
             this.buffer ~= _month;
             this.buffer ~= "/";
             this.buffer ~= _title;
 
-            auto content = buffer in this.md.posts_by_url;
+            auto content = buffer in this.cache.posts_by_url;
             if (content is null)
                 throw new HTTPStatusException(HTTPStatus.NotFound);
-            return *content;
+            return (*content).md;
         }
 
         PostAddingResult addPost(string title, string content)
@@ -81,7 +79,7 @@ class MoodAPI : mood.api.spec.MoodAPI
             writeFileUTF8(file, markdown);
 
             auto url = prefix ~ "/" ~ processed_title;
-            this.md.add(url, markdown);
+            this.cache.add(url, markdown);
 
             return PostAddingResult(url);
         }

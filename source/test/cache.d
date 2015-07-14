@@ -2,8 +2,7 @@ module test.cache;
 
 import test.env : rootDir;
 
-import mood.cache.md;
-import mood.cache.html;
+import mood.cache.posts;
 
 unittest
 {
@@ -24,27 +23,23 @@ unittest
 
     // most common workflow
 
-    HTMLCache html;
-    auto md = MarkdownCache(html);
-    md.loadFromDisk(Path(test_dir));
+    BlogPosts cache;
+    cache.loadFromDisk(Path(test_dir));
 
-    assert (md.posts_by_url["url1/nested/article"] == "# a");
-    assert (md.posts_by_url["url2/article"] == "### x");
-    assert (md.posts_by_url.length == 2);
-
-    assert (html.posts_by_url["url1/nested/article"] == "<h1> a</h1>\n");
-    assert (html.posts_by_url["url2/article"] == "<h3> x</h3>\n");
-    assert (html.posts_by_url.length == 2);
+    assert (cache.posts_by_url["url1/nested/article"].md == "# a");
+    assert (cache.posts_by_url["url1/nested/article"].html == "<h1> a</h1>\n");
+    assert (cache.posts_by_url["url2/article"].md == "### x");
+    assert (cache.posts_by_url["url2/article"].html == "<h3> x</h3>\n");
+    assert (cache.posts_by_url.length == 2);
 
     // missing cache dump on disk
 
-    md.loadFromDisk(Path("/unlikely/to/exist"));
-    assert (md.posts_by_url.length == 0);
+    cache.loadFromDisk(Path("/unlikely/to/exist"));
+    assert (cache.posts_by_url.length == 0);
 
     // relative base path
 
     auto relpath = Path(relativePath(test_dir, getcwd()));
-    md.loadFromDisk(relpath);
-    assert (md.posts_by_url.length == 2);
-    assert (html.posts_by_url.length == 2);
+    cache.loadFromDisk(relpath);
+    assert (cache.posts_by_url.length == 2);
 }

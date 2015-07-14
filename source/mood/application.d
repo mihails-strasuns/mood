@@ -20,16 +20,14 @@ struct MoodApp
     import vibe.http.server;
     import vibe.inet.path : Path;
 
-    import mood.cache.md;
-    import mood.cache.html;
+    import mood.cache.posts;
     import mood.config;
     import mood.api.implementation;
 
     private
     {
-        MarkdownCache md_cache;
-        HTMLCache     html_cache;
-        MoodAPI       api;
+        BlogPosts cache;
+        MoodAPI   api;
     }
 
     // no default construction, use initialize() instead
@@ -45,16 +43,15 @@ struct MoodApp
 
         logInfo("Initializing Mood application");
         auto app = MoodApp.init;
-        app.md_cache = MarkdownCache(app.html_cache);
 
         auto markdown_sources = Path(MoodPathConfig.markdownSources);
         logInfo("Looking for blog post sources at %s", markdown_sources);
-        app.md_cache.loadFromDisk(markdown_sources);
-        logInfo("%s posts loaded", app.html_cache.posts_by_url.length);
-        logTrace("\t%s", app.html_cache.posts_by_url.keys.join("\n\t"));
+        app.cache.loadFromDisk(markdown_sources);
+        logInfo("%s posts loaded", app.cache.posts_by_url.length);
+        logTrace("\t%s", app.cache.posts_by_url.keys.join("\n\t"));
 
         logInfo("Initializing Mood RESTful API");
-        app.api = new MoodAPI(app.md_cache, app.html_cache);
+        app.api = new MoodAPI(app.cache);
 
         logInfo("Application data is ready");
         return app;
@@ -82,7 +79,7 @@ struct MoodApp
         auto capture = matchFirst(req.path, post_pattern);
         if (!capture.empty)
         {
-            auto pcontent = capture.hit in this.html_cache.posts_by_url;
+            auto pcontent = capture.hit in this.cache.posts_by_url;
             if (pcontent !is null)
             {
                 auto title = "Title";
