@@ -15,7 +15,7 @@ import vibe.core.log;
     Mood uses one instance of this struct to handle HTTP requests
     that need access to cached in-memory data
  */
-struct MoodApp
+class MoodApp
 {
     import vibe.http.server;
     import vibe.inet.path : Path;
@@ -30,31 +30,25 @@ struct MoodApp
         MoodAPI   api;
     }
 
-    // no default construction, use initialize() instead
-    @disable this();
-
     /**
         Creates application instance and initializes it from
         the disk data if present
      */
-    static MoodApp initialize()
+    this()
     {
-        import std.range : join;
-
         logInfo("Initializing Mood application");
-        auto app = MoodApp.init;
 
         auto markdown_sources = Path(MoodPathConfig.markdownSources);
         logInfo("Looking for blog post sources at %s", markdown_sources);
-        app.cache.loadFromDisk(markdown_sources);
-        logInfo("%s posts loaded", app.cache.posts_by_url.length);
-        logTrace("\t%s", app.cache.posts_by_url.keys.join("\n\t"));
+        this.cache.loadFromDisk(markdown_sources);
+        logInfo("%s posts loaded", this.cache.posts_by_url.length);
+        import std.range : join;
+        logTrace("\t%s", this.cache.posts_by_url.keys.join("\n\t"));
 
         logInfo("Initializing Mood RESTful API");
-        app.api = new MoodAPI(app.cache);
+        this.api = new MoodAPI(this.cache);
 
         logInfo("Application data is ready");
-        return app;
     }
 
     /**

@@ -19,7 +19,7 @@ import vibe.web.rest;
 void main(string[] args)
 {
     setLogLevel(LogLevel.trace);
-    auto app = MoodApp.initialize();
+    auto app = new MoodApp();
 
     auto settings = new HTTPServerSettings;
     settings.port = 8080;
