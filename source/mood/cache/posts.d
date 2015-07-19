@@ -1,5 +1,6 @@
 module mood.cache.posts;
 
+import std.datetime;
 import vibe.core.log;
 import mood.cache.core;
 
@@ -10,7 +11,14 @@ struct BlogPost
     string title;
     string html;
 
-    static BlogPost create(string src)
+    SysTime created_at;
+
+    int opCmp()(auto ref const BlogPost rhs)
+    {
+        return this.created_at < rhs.created_at;
+    }
+
+    static BlogPost create(string key, string src)
     {
         import vibe.textfilter.markdown;
         import std.regex, std.string;
@@ -35,15 +43,20 @@ struct BlogPost
     {
         import std.regex, std.string;
 
-        static key_value     = ctRegex!(r"^([^:]+): (.+)$");
+        static key_value = ctRegex!(r"^([^:]+): (.+)$");
 
         foreach (line; src.splitLines())
         {
             auto pair = line.matchFirst(key_value);
             if (!pair.empty)
             {
-                if (pair[1] == "Title")
-                    dst.title = pair[2];
+                auto key = pair[1];
+                auto value = pair[2];
+
+                if (key == "Title")
+                    dst.title = value;
+                else if (key == "Date")
+                    dst.created_at = SysTime.fromISOString(value);
             }
         }
     }
@@ -56,7 +69,7 @@ struct BlogPosts
     Cache!BlogPost cache;
     alias cache this;
 
-    auto posts_by_url()
+    auto posts_by_url() @property
     {
         return this.cache.entries;
     }

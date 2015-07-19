@@ -75,7 +75,13 @@ class MoodAPI : mood.api.spec.MoodAPI
             auto file = target_dir ~ Path(processed_title ~ ".md");
             enforce (!existsFile(file));
 
-            string markdown = title ~ "\n==========\n\n" ~ content;
+            string markdown = format(
+                "<!--\nTitle: %s\nDate: %s\n-->\n%s",
+                title,
+                date.toISOString(),
+                content
+            );
+
             writeFileUTF8(file, markdown);
 
             auto url = prefix ~ "/" ~ processed_title;

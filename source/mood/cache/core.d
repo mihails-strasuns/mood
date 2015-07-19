@@ -46,7 +46,7 @@ unittest
         string data;
         alias data this;
 
-        static DummyEntry create(string source)
+        static DummyEntry create(string key, string source)
         {
             return DummyEntry(source);
         }
@@ -77,7 +77,7 @@ unittest
  */
 struct CacheData(TEntry)
 {
-    static assert (is(typeof(TEntry.create(string.init)) == TEntry));
+    static assert (is(typeof(TEntry.create(string.init, string.init)) == TEntry));
 
     import vibe.inet.path : Path;
 
@@ -117,7 +117,7 @@ struct CacheData(TEntry)
      */
     Cache!TEntry add(string key, string data) immutable
     {
-        auto entry = TEntry.create(data);
+        auto entry = TEntry.create(key, data);
         return this.add(key, entry);
     }
 
@@ -153,7 +153,7 @@ struct CacheData(TEntry)
             if (path.isFile && path.name.endsWith(ext))
             {
                 auto key = relativePath(path.name, root)[0 .. $ - ext.length];
-                cache.entries[key] = TEntry.create(readText(path.name));
+                cache.entries[key] = TEntry.create(key, readText(path.name));
             }
         }
 

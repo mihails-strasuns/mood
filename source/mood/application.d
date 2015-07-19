@@ -73,11 +73,11 @@ class MoodApp
         auto capture = matchFirst(req.path, post_pattern);
         if (!capture.empty)
         {
-            auto pcontent = capture.hit in this.cache.posts_by_url;
-            if (pcontent !is null)
+            auto entry = capture.hit in this.cache.posts_by_url;
+            if (entry !is null)
             {
-                auto title = "Title";
-                auto content = *pcontent;
+                auto title = entry.title;
+                auto content = entry.html;
                 res.render!("single_post.dt", title, content);
             }
             else
