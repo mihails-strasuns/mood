@@ -1,23 +1,51 @@
 module mood.cache.posts;
 
+import vibe.core.log;
 import mood.cache.core;
 
 struct BlogPost
 {
-    string   md;
+    string md;
 
-    string   title;
-    string   html;
+    string title;
+    string html;
 
-    static BlogPost create(string source)
+    static BlogPost create(string src)
     {
         import vibe.textfilter.markdown;
+        import std.regex, std.string;
 
         BlogPost entry;
-        entry.md      = source;
-        entry.title   = "TODO";
-        entry.html    = filterMarkdown(source, MarkdownFlags.backtickCodeBlocks);
+        entry.md   = src;
+        entry.html = filterMarkdown(src, MarkdownFlags.backtickCodeBlocks);
+
+        static first_comment = ctRegex!(r"<!--([^-]+)-->");
+        auto possible_metadata = src.matchFirst(first_comment);
+
+        if (!possible_metadata.empty)
+        {
+            auto metadata = strip(possible_metadata[1]);
+            parseMetadata(metadata, entry);
+        }
+
         return entry;
+    }
+
+    private static void parseMetadata(string src, ref BlogPost dst)
+    {
+        import std.regex, std.string;
+
+        static key_value     = ctRegex!(r"^([^:]+): (.+)$");
+
+        foreach (line; src.splitLines())
+        {
+            auto pair = line.matchFirst(key_value);
+            if (!pair.empty)
+            {
+                if (pair[1] == "Title")
+                    dst.title = pair[2];
+            }
+        }
     }
 }
 
