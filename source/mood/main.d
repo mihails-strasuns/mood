@@ -7,6 +7,8 @@ else:
 import mood.config;
 import mood.application;
 
+import extra.routing;
+
 import vibe.core.core;
 import vibe.core.log;
 
@@ -43,9 +45,7 @@ void main(string[] args)
 
     // "real" request handlers
     router.registerRestInterface(app.API());
-    router.get  (MoodURLConfig.posts ~ "/*", &app.postHTML);
-    router.post (MoodURLConfig.posts, &app.addPost);
-    router.get  (MoodURLConfig.admin, &app.admin);
+    router.register(app);
     router.get  ("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 
     listenHTTP(settings, router);

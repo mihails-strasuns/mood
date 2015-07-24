@@ -8,6 +8,7 @@
 module mood.application;
 
 import vibe.core.log;
+import vibe.web.common;
 
 /**
     Application data type
@@ -65,6 +66,7 @@ class MoodApp
     /**
         Renders page for a single blog post
      */
+    @path(MoodURLConfig.posts ~ "/*") @method(HTTPMethod.GET)
     void postHTML(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.regex;
@@ -88,6 +90,7 @@ class MoodApp
     /**
         Adds new post
      */
+    @path(MoodURLConfig.posts) @method(HTTPMethod.POST)
     void addPost(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.exception : enforce;
@@ -102,6 +105,7 @@ class MoodApp
     /**
         Renders admin page for adding new blog post
      */
+    @path(MoodURLConfig.admin) @method(HTTPMethod.GET)
     void admin(HTTPServerRequest req, HTTPServerResponse res)
     {
         res.render!("new_post.dt");
