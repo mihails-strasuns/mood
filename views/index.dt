@@ -30,37 +30,12 @@ html.no-js(lang='', xmlns='http://www.w3.org/1999/html')
 					| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
 				a.Button(href='/newentry.html') New entry
 			.articles
-				article.article
-					header
-						h2.title Lorem ipsum
-					.content
-						p
-							| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit leo et orci egestas, rhoncus consequat lectus ullamcorper. Suspendisse sit amet ex eget dolor sagittis tincidunt non sed velit. Vestibulum erat sapien, faucibus et nisi in, tristique sollicitudin ligula. Donec sed justo sed nibh consequat luctus. Vestibulum sapien neque, bibendum vel tempor nec, bibendum ac diam. Etiam elementum ligula sed placerat imperdiet. Curabitur vitae diam ac dolor placerat vehicula vel eget eros. Nunc tempor eros at enim luctus, vel suscipit felis iaculis. Proin consectetur orci ut placerat sagittis.
-					footer
-						.posted 24 jan
-				article.article
-					header
-						h2.title Lorem ipsum
-					.content
-						p
-							| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit leo et orci egestas, rhoncus consequat lectus ullamcorper. Suspendisse sit amet ex eget dolor sagittis tincidunt non sed velit. Vestibulum erat sapien, faucibus et nisi in, tristique sollicitudin ligula. Donec sed justo sed nibh consequat luctus. Vestibulum sapien neque, bibendum vel tempor nec, bibendum ac diam. Etiam elementum ligula sed placerat imperdiet. Curabitur vitae diam ac dolor placerat vehicula vel eget eros. Nunc tempor eros at enim luctus, vel suscipit felis iaculis. Proin consectetur orci ut placerat sagittis.
-					footer
-						.posted 24 jan
-				.pages
-					a.page.prev.fa.fa-angle-left(href='/page/6')
-					a.page(href='/page/1') 1
-					span.page.disabled &mldr;
-					a.page(href='/page/6') 6
-					a.page.active(href='/page/7') 7
-					a.page(href='/page/8') 8
-					span.page.disabled &mldr;
-					a.page(href='/page/10') 10
-					a.page.next.fa.fa-angle-right(href='page/8')
-				.pages
-					span.page.prev.fa.fa-angle-left.disabled
-					a.page.active(href='/page/1') 1
-					a.page(href='/page/2') 2
-					span.page.disabled &mldr;
-					a.page(href='/page/10') 10
-					a.page.next.fa.fa-angle-right(href='page/2')
+				- foreach (post; posts)
+					article.article
+						header
+							h2.title !{ post.title }
+						.content
+							div !{ post.html }
+						footer
+							.posted !{ post.pretty_date }
 		footer.Footer

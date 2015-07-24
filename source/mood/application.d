@@ -63,6 +63,18 @@ class MoodApp
         return this.api;
     }
 
+    @path(MoodURLConfig.posts) @method(HTTPMethod.GET)
+    void index(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        import std.conv : to;
+
+        // how many posts to retrieve
+        auto n = to!uint(req.query.get("n", "5"));
+
+        auto posts = this.cache.posts_by_date[0 .. (n > $ ? $ : n)];
+        res.render!("index.dt", posts);
+    }
+
     /**
         Renders page for a single blog post
      */

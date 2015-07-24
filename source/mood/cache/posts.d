@@ -13,9 +13,9 @@ struct BlogPost
 
     SysTime created_at;
 
-    int opCmp()(auto ref const BlogPost rhs)
+    string pretty_date() const @property
     {
-        return this.created_at < rhs.created_at;
+        return (cast(Date) this.created_at).toSimpleString();
     }
 
     static BlogPost create(string key, string src)
@@ -65,32 +65,58 @@ struct BlogPost
 struct BlogPosts
 {
     import vibe.inet.path : Path;
+    import std.algorithm : sort, map;
 
-    Cache!BlogPost cache;
-    alias cache this;
+    private:
 
-    auto posts_by_url() @property
-    {
-        return this.cache.entries;
-    }
+        Cache!BlogPost cache;
+        immutable(BlogPost)*[] by_date;
 
-    ref typeof(this) add(string key, string data) 
-    {
-        this.cache.replaceWith(this.cache.add(key, data));
-        return this;
-    }
+    public:
 
-    /**
-        Scans file system for markdown sources and builds a new cache
-        based on that, replacing the current one.
+        auto posts_by_url() @property
+        {
+            return this.cache.entries;
+        }
 
-        Params:
-            root_path = directory where all .md files are stored
-     */
-    void loadFromDisk(Path root_path)
-    {
-        this.cache.replaceWith(this.cache.loadFromDisk(root_path, ".md"));
-    }
+        auto posts_by_date() @property
+        {
+            return this.by_date;
+        }
+
+        ref typeof(this) add(string key, string data) 
+        {
+            this.cache.replaceWith(this.cache.add(key, data));
+            this.reindexCache();
+            return this;
+        }
+
+        /**
+            Scans file system for markdown sources and builds a new cache
+            based on that, replacing the current one.
+
+            Params:
+                root_path = directory where all .md files are stored
+         */
+        void loadFromDisk(Path root_path)
+        {
+            this.cache.replaceWith(this.cache.loadFromDisk(root_path, ".md"));
+            this.reindexCache();
+        }
+
+    private:
+
+        void reindexCache()
+        {
+            this.by_date.length = this.cache.entries.length;
+            size_t index = 0;
+            foreach (key, ref value; this.cache.entries)
+            {
+                this.by_date[index] = &value;
+                ++index;
+            }
+            sort!((a, b) => a.created_at > b.created_at)(this.by_date);
+        }
 }
 
 unittest
