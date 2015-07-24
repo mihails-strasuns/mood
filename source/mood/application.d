@@ -10,6 +10,8 @@ module mood.application;
 import vibe.core.log;
 import vibe.web.common;
 
+import extra.routing;
+
 /**
     Application data type
 
@@ -102,7 +104,7 @@ class MoodApp
     /**
         Adds new post
      */
-    @path(MoodURLConfig.posts) @method(HTTPMethod.POST)
+    @path(MoodURLConfig.posts) @method(HTTPMethod.POST) @auth
     void addPost(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.exception : enforce;
@@ -117,7 +119,7 @@ class MoodApp
     /**
         Renders admin page for adding new blog post
      */
-    @path(MoodURLConfig.admin) @method(HTTPMethod.GET)
+    @path(MoodURLConfig.admin) @method(HTTPMethod.GET) @auth
     void admin(HTTPServerRequest req, HTTPServerResponse res)
     {
         res.render!("new_post.dt");

@@ -39,14 +39,14 @@ void main(string[] args)
         MoodAuthConfig.realm,
         (user, pwd) => user == MoodAuthConfig.user && pwd == MoodAuthConfig.password
     );
-    router.any (MoodURLConfig.admin, auth_dg);
-    router.post(MoodURLConfig.posts, auth_dg);
+    // for rendering handlers auth as added via @auth attribute but REST mdoule
+    // does not support anything like that yet
     router.post(MoodURLConfig.apiBase ~ MoodURLConfig.posts, auth_dg);
 
     // "real" request handlers
     router.registerRestInterface(app.API());
-    router.register(app);
-    router.get  ("*", serveStaticFiles(Path(MoodPathConfig.statics)));
+    router.register(app, auth_dg);
+    router.get ("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 
     listenHTTP(settings, router);
     runEventLoop();

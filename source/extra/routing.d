@@ -3,7 +3,16 @@ module extra.routing;
 import vibe.http.router;
 import vibe.web.common;
 
-void register(T)(URLRouter router, T app)
+struct AuthRequiredAttribute { }
+
+AuthRequiredAttribute auth() @property
+{
+    assert (__ctfe);
+    return AuthRequiredAttribute.init;
+}
+
+void register(T)(URLRouter router, T app,
+        void delegate(HTTPServerRequest, HTTPServerResponse) auth_dg)
     if (is(T == class))
 {
     static bool isUserMethod(string name)
@@ -25,6 +34,8 @@ void register(T)(URLRouter router, T app)
 
             enum http = findFirstUDA!(MethodAttribute, method);
             enum path = findFirstUDA!(PathAttribute, method);
+            enum auth = findFirstUDA!(AuthRequiredAttribute, method);
+            pragma(msg, __traits(getAttributes, method));
 
             static if (path.found)
             {
@@ -36,18 +47,23 @@ void register(T)(URLRouter router, T app)
                     switch (http.value.data)
                     {
                         case HTTPMethod.GET:
+                            static if (auth.found) router.get(path.value, auth_dg);
                             router.get(path.value, method_dg);
                             break;
                         case HTTPMethod.POST:
+                            static if (auth.found) router.post(path.value, auth_dg);
                             router.post(path.value, method_dg);
                             break;
                         case HTTPMethod.DELETE:
+                            static if (auth.found) router.delete_(path.value, auth_dg);
                             router.delete_(path.value, method_dg);
                             break;
                         case HTTPMethod.PATCH:
+                            static if (auth.found) router.patch(path.value, auth_dg);
                             router.patch(path.value, method_dg);
                             break;
                         case HTTPMethod.PUT:
+                            static if (auth.found) router.put(path.value, auth_dg);
                             router.put(path.value, method_dg);
                             break;
                         default:
@@ -56,6 +72,7 @@ void register(T)(URLRouter router, T app)
                 }
                 else
                 {
+                    static if (auth.found) router.any(path.value, auth_dg);
                     router.any(path.value, method_dg);
                 }
             }
