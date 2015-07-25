@@ -10,7 +10,7 @@ module mood.application;
 import vibe.core.log;
 import vibe.web.common;
 
-import extra.routing;
+import mood.util.route_attr;
 
 /**
     Application data type
@@ -65,8 +65,15 @@ class MoodApp
         return this.api;
     }
 
-    @path(MoodURLConfig.posts) @method(HTTPMethod.GET)
-    void index(HTTPServerRequest req, HTTPServerResponse res)
+    /**
+        Renders page with latest blog post feed, sorted by date
+
+        Each post is rendered in form of short summary and link to dedicated
+        post page. Query parameter `n` control how many posts to render on
+        this page
+     */
+    @path("/posts") @method(HTTPMethod.GET)
+    void lastBlogPosts(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.conv : to;
 
@@ -78,13 +85,15 @@ class MoodApp
     }
 
     /**
-        Renders page for a single blog post
+        Renders page with full content for a specific blog post
+
+        Each post URL is supposed to be in form of /YYYY/MM/title
      */
-    @path(MoodURLConfig.posts ~ "/*") @method(HTTPMethod.GET)
-    void postHTML(HTTPServerRequest req, HTTPServerResponse res)
+    @path("/posts/*") @method(HTTPMethod.GET)
+    void singleBlogPost(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.regex;
-        static post_pattern = regex(r"\d{4}/\d{2}/.+$");
+        static post_pattern = ctRegex!(r"\d{4}/\d{2}/.+$");
 
         auto capture = matchFirst(req.path, post_pattern);
         if (!capture.empty)
@@ -102,10 +111,13 @@ class MoodApp
     }
 
     /**
-        Adds new post
+        Processes POST request with a form data for adding new post
+
+        After gathering necessary data processing is forwarded to REST API
+        implementation
      */
-    @path(MoodURLConfig.posts) @method(HTTPMethod.POST) @auth
-    void addPost(HTTPServerRequest req, HTTPServerResponse res)
+    @path("/posts") @method(HTTPMethod.POST) @auth
+    void processNewBlogPost(HTTPServerRequest req, HTTPServerResponse res)
     {
         import std.exception : enforce;
         auto title   = req.form["title"];
@@ -113,14 +125,17 @@ class MoodApp
         enforce(title.length != 0 && content.length != 0);
 
         auto url = this.api.addPost(title, content).url;
-        res.redirect(MoodURLConfig.posts ~ "/" ~ url);
+        res.redirect("/posts/" ~ url);
     }
 
     /**
-        Renders admin page for adding new blog post
+        Renders privileged access page which serves as entry point for any
+        modifications of blog data via web interfaces
+
+        Currently only allows adding new posts
      */
-    @path(MoodURLConfig.admin) @method(HTTPMethod.GET) @auth
-    void admin(HTTPServerRequest req, HTTPServerResponse res)
+    @path("/admin") @method(HTTPMethod.GET) @auth
+    void administration(HTTPServerRequest req, HTTPServerResponse res)
     {
         res.render!("new_post.dt");
     }

@@ -31,7 +31,7 @@ struct Cache(TEntry)
     }
 
     /// remove all entries
-    void clear()
+    void removeAll()
     {
         import core.atomic;
         atomicStore(this.data, new immutable CacheData!TEntry);

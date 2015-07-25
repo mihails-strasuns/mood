@@ -5,6 +5,8 @@ module mood.config;
 
 /**
     Configuration for filesystem paths
+
+    All entries must end with '/' for uniform appending in the app
  */
 enum MoodPathConfig
 {
@@ -15,21 +17,11 @@ enum MoodPathConfig
 }
 
 /**
-    Configuration for URL paths
- */
-enum MoodURLConfig
-{
-    apiBase = "/api/",
-    posts   = "/posts",
-    admin   = "/admin",
-}
-
-/**
     Used to identify blog owner
  */
 enum MoodAuthConfig
 {
-    user     = "abc",
-    password = "bbb",
-    realm    = "please don't store me in git"
+    user     = "please don't store me in git",
+    password = "please don't store me in git",
+    realm    = "please don't store me in git",
 }

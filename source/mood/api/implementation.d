@@ -8,18 +8,11 @@ import mood.api.spec;
 ///
 class MoodAPI : mood.api.spec.MoodAPI
 {
-    import vibe.http.common;
-    import vibe.data.json;
-
     import mood.cache.posts;
-    import mood.config;
 
-    private
-    {
-        BlogPosts*   cache;
-        char[]       buffer;
-    }
+    private BlogPosts* cache;
 
+    ///
     this (ref BlogPosts cache)
     {
         this.cache = &cache;
@@ -27,40 +20,64 @@ class MoodAPI : mood.api.spec.MoodAPI
 
     override:
 
+        /**
+            Get original Markdown sources for a given post
+
+            Params:
+                _year = 4 digit year part of the URL
+                _month = 2 digit month part of the URL
+                _title = URL-normalized title
+
+            Returns:
+                markdown source of the matching post as string
+
+            Throws:
+                HTTPStatusException (with status NotFound) if requested post
+                is not found in cache
+        */
         string getPostSource(string _year, string _month, string _title)
         {
-            // poor man's `format`, don't want to allocate new string each time
-            // TODO: fix Phobos formattedWrite
-            this.buffer.length = 0;
-            assumeSafeAppend(this.buffer);
-            this.buffer ~= _year;
-            this.buffer ~= "/";
-            this.buffer ~= _month;
-            this.buffer ~= "/";
-            this.buffer ~= _title;
+            import std.format : format;
+            import vibe.http.common;
 
-            auto content = buffer in this.cache.posts_by_url;
+            auto url = format("%s/%s/%s", _year, _month, _title);
+            auto content = url in this.cache.posts_by_url;
             if (content is null)
                 throw new HTTPStatusException(HTTPStatus.NotFound);
             return (*content).md;
         }
 
-        PostAddingResult addPost(string title, string content)
+        /**
+            Add new posts to cache, store it in the filesystem and generate
+            actual post HTML
+
+            Params:
+                raw_title = post title (spaces will be encoded as "_" in the URL)
+                content = post Markdown sources (including metadata as HTML comment)
+
+            Returns:
+                struct with only member field, `url`, containing relative URL added
+                post is available under
+
+            Throws:
+                Exception if post with such url/path is already present
+        */
+        PostAddingResult addPost(string raw_title, string content)
         {
-            import std.regex;
-            import std.datetime;
-            import std.format;
-            import std.string;
+            import mood.config;
 
             import vibe.inet.path;
             import vibe.core.file;
 
-            static title_transform = ctRegex!(r"\W+");
-            static title_trim      = ctRegex!(r"^_*(.*?)_*$");
+            import std.array : replace;
+            import std.datetime : Clock, SysTime;
+            import std.format : format;
+            import std.string : strip;
+            import std.exception : enforce;
 
-            string processed_title = title
-                .replaceAll(title_transform, "_")
-                .replaceAll(title_trim, "$1");
+            string title = raw_title
+                .replace(" ", "_")
+                .strip();
 
             auto date = Clock.currTime();
             auto prefix = format(
@@ -72,19 +89,19 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             createDirectoryRecursive(target_dir);
 
-            auto file = target_dir ~ Path(processed_title ~ ".md");
+            auto file = target_dir ~ Path(title ~ ".md");
             enforce (!existsFile(file));
 
             string markdown = format(
                 "<!--\nTitle: %s\nDate: %s\n-->\n%s",
-                title,
+                raw_title,
                 date.toISOString(),
                 content
             );
 
             writeFileUTF8(file, markdown);
 
-            auto url = prefix ~ "/" ~ processed_title;
+            auto url = prefix ~ "/" ~ title;
             this.cache.add(url, markdown);
 
             return PostAddingResult(url);
@@ -95,6 +112,8 @@ import vibe.core.log;
 import vibe.core.file;
 import vibe.inet.path;
 
+// simple utility wrapper missing in vibe.d
+// differs from Phobos version by using vibe.d async I/O primitives
 private void createDirectoryRecursive(Path path)
 {
     if (!existsFile(path))

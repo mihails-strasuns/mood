@@ -7,7 +7,7 @@ else:
 import mood.config;
 import mood.application;
 
-import extra.routing;
+import mood.util.route_attr;
 
 import vibe.core.core;
 import vibe.core.log;
@@ -20,7 +20,7 @@ import vibe.web.rest;
 
 void main(string[] args)
 {
-    setLogLevel(LogLevel.trace);
+    setLogLevel(LogLevel.info);
     auto app = new MoodApp();
 
     auto settings = new HTTPServerSettings;
@@ -33,6 +33,7 @@ void main(string[] args)
     settings.sslContext.usePrivateKeyFile("certs/blog.key");
 
     auto router = new URLRouter;
+
     // protected sections require authorization first before route fall-through
     import vibe.http.auth.basic_auth;
     auto auth_dg = performBasicAuth(
@@ -41,12 +42,13 @@ void main(string[] args)
     );
     // for rendering handlers auth as added via @auth attribute but REST mdoule
     // does not support anything like that yet
-    router.post(MoodURLConfig.apiBase ~ MoodURLConfig.posts, auth_dg);
+    router.post("/api/*", auth_dg);
 
     // "real" request handlers
     router.registerRestInterface(app.API());
     router.register(app, auth_dg);
-    router.get ("*", serveStaticFiles(Path(MoodPathConfig.statics)));
+    // anything unhandled should be checked for presence in statics folder
+    router.get("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 
     listenHTTP(settings, router);
     runEventLoop();
