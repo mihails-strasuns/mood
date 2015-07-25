@@ -1,4 +1,6 @@
 /.dub/
 /dub.selections.json
 /mood
+/certs
+__test_library__
 .swp
