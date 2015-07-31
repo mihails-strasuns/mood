@@ -60,6 +60,18 @@ void main(string[] args)
     // does not support anything like that yet
     router.post("/api/*", auth_dg);
 
+    // redirects for backwards compatibility with old Blogpost-hosted stuff
+    router.get(
+        "2014/12/making-sure-your-d-projects-wont-break.html",
+        staticRedirect("2014/12/making_sure_your_d_projects_wont_break",
+            HTTPStatus.MovedPermanently)
+    );
+    router.get(
+        "2015/01/thoughts-about-rust-from-d-programmer.html",
+        staticRedirect("2015/01/thoughts_about_rust_from_d_programmer",
+            HTTPStatus.MovedPermanently)
+    );
+
     // "real" request handlers
     router.registerRestInterface(app.API());
     router.register(app, auth_dg);
