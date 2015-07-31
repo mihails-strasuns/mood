@@ -24,4 +24,3 @@ html.no-js(lang='')
 						div
 							input(name='search', type='text')
 		block inner
-		script(type='text/javascript', src='/js/mood.js')
