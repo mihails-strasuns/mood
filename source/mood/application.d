@@ -102,7 +102,7 @@ class MoodApp
             if (entry !is null)
             {
                 auto title = entry.title;
-                auto content = entry.html;
+                auto content = entry.html_full;
                 res.render!("single_post.dt", title, content);
             }
             else
