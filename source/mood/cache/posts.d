@@ -32,6 +32,8 @@ struct BlogPost
     string html_full;
     /// Post creation date
     SysTime created_at;
+    /// Relative path/url for that specific post (also used as cache key)
+    string relative_url;
 
     /**
         Keeps only date part of creation timestamp and formats it in
@@ -64,6 +66,7 @@ struct BlogPost
         import std.regex, std.string;
 
         BlogPost entry;
+        entry.relative_url = key;
         entry.md = src;
         entry.html_full = filterMarkdown(src, MarkdownFlags.backtickCodeBlocks);
 
