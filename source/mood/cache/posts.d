@@ -26,8 +26,10 @@ struct BlogPost
     string md;
     /// Post title
     string title;
-    /// Rendered blog post HTML
-    string html;
+    /// Part of rendered blog post HTML used for short preview
+    string html_intro;
+    /// Full rendered blog post HTML
+    string html_full;
     /// Post creation date
     SysTime created_at;
 
@@ -62,8 +64,22 @@ struct BlogPost
         import std.regex, std.string;
 
         BlogPost entry;
-        entry.md   = src;
-        entry.html = filterMarkdown(src, MarkdownFlags.backtickCodeBlocks);
+        entry.md = src;
+        entry.html_full = filterMarkdown(src, MarkdownFlags.backtickCodeBlocks);
+
+        // If text has any headers, all content before the first header will
+        // be used as preview. Otherwise full content will be used as preview.
+        static first_header = ctRegex!(r"\n#+\s.+\n");
+        auto possible_intro = src.matchFirst(first_header);
+        if (!possible_intro.empty)
+        {
+            entry.html_intro = filterMarkdown(
+                possible_intro.pre,
+                MarkdownFlags.backtickCodeBlocks
+            );
+        }
+        else
+            entry.html_intro = entry.html_full;
 
         static first_comment = ctRegex!(r"<!--([^-]+)-->");
         auto possible_metadata = src.matchFirst(first_comment);
@@ -191,16 +207,16 @@ unittest
     BlogPosts cache;
 
     cache.add("/url", "# abcd");
-    assert (cache.posts_by_url["/url"].html == "<h1> abcd</h1>\n");
+    assert (cache.posts_by_url["/url"].html_full == "<h1> abcd</h1>\n");
 
     cache.cache.removeAll();
     cache.add("/block/1", "# a");
     cache.add("/block/2", "## b");
     cache.add("/block/3", "### c");
 
-    assert (cache.posts_by_url["/block/1"].html == "<h1> a</h1>\n");
-    assert (cache.posts_by_url["/block/2"].html == "<h2> b</h2>\n");
-    assert (cache.posts_by_url["/block/3"].html == "<h3> c</h3>\n");
+    assert (cache.posts_by_url["/block/1"].html_full == "<h1> a</h1>\n");
+    assert (cache.posts_by_url["/block/2"].html_full == "<h2> b</h2>\n");
+    assert (cache.posts_by_url["/block/3"].html_full == "<h3> c</h3>\n");
 
     cache.cache.removeAll();
     auto content ="<!--\nTitle: Some Title\nDate: 20150724T041643.332037\n-->";
