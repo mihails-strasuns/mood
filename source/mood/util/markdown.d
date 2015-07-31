@@ -419,12 +419,35 @@ private void writeBlock(R)(ref R dst, ref const Block block, LinkRef[string] lin
             break;
         case BlockType.Code:
             assert(block.blocks.length == 0);
-            dst.put("<pre class=\"prettyprint\"><code>");
-            foreach(ln; block.text){
-                filterHTMLEscape(dst, ln);
-                dst.put("\n");
+
+            version (MoodWithPygmentize)
+            {
+                dst.put("<div class=\"hll\">");
+                {
+                    import std.process;
+                    import std.array : join;
+
+                    auto pygmentize = pipeShell("pygmentize -l D -f html");
+                    foreach (line; block.text)
+                        pygmentize.stdin.writeln(line);
+                    pygmentize.stdin.flush();
+                    pygmentize.stdin.close();                    
+
+                    char[] buffer;
+                    while (pygmentize.stdout.readln(buffer) != 0)
+                        dst.put(buffer);
+                }
+                dst.put("</div>");
             }
-            dst.put("</code></pre>");
+            else
+            {
+                dst.put("<div class=\"hll\"><code><pre>");
+                foreach(ln; block.text){
+                    filterHTMLEscape(dst, ln);
+                    dst.put("\n");
+                }
+                dst.put("</pre></code></div>");
+            }
             break;
         case BlockType.Quote:
             dst.put("<blockquote>");

@@ -21,6 +21,21 @@ import vibe.web.rest;
 void main(string[] args)
 {
     setLogLevel(LogLevel.info);
+
+    version (MoodWithPygmentize)
+    {
+        {
+            import std.process;
+            import std.exception;
+            auto ret = executeShell("pygmentize -h");
+            enforce(
+                ret.status == 0,
+                "Mood was compiled with 'pygmentize' support but " ~
+                    "it wasn't found via PATH"
+            );
+        }
+    }
+
     auto app = new MoodApp();
 
     auto settings = new HTTPServerSettings;
