@@ -201,6 +201,7 @@ private struct Block {
     string[] text;
     Block[] blocks;
     size_t headerLevel;
+    string language; // if type == BlockType.Code
 }
 
 private void parseBlocks(ref Block root, ref Line[] lines, IndentType[] base_indent, scope MarkdownSettings settings)
@@ -322,7 +323,10 @@ pure @safe {
                     }
                     break;
                 case LineType.CodeBlockDelimiter:
-                    lines.popFront(); // TODO: get language from line
+                    import std.exception : enforce;
+                    enforce(lines.front.unindented.length >= 3); // ```
+                    b.language = lines.front.unindented[3 .. $];
+                    lines.popFront();
                     b.type = BlockType.Code;
                     while(!lines.empty){
                         if( lines.front.indent.length < base_indent.length ) break;
@@ -427,7 +431,7 @@ private void writeBlock(R)(ref R dst, ref const Block block, LinkRef[string] lin
                     import std.process;
                     import std.array : join;
 
-                    auto pygmentize = pipeShell("pygmentize -l D -f html");
+                    auto pygmentize = pipeShell("pygmentize -l " ~ block.language ~ " -f html");
                     foreach (line; block.text)
                         pygmentize.stdin.writeln(line);
                     pygmentize.stdin.flush();
