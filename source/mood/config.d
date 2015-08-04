@@ -1,5 +1,6 @@
 /**
     Defines application-wide constants in one easy to tweak place
+    dfdsf
  */
 module mood.config;
 
@@ -21,7 +22,7 @@ enum MoodPathConfig
  */
 enum MoodAuthConfig
 {
-    user     = "aaa",
-    password = "bbb",
+    user     = "please don't store me in git",
+    password = "please don't store me in git",
     realm    = "please don't store me in git",
 }
