@@ -62,6 +62,8 @@ void main(string[] args)
     // "real" request handlers
     router.registerRestInterface(app.API());
     router.register(app, auth_dg);
+    // by default serve post feed
+    router.get("/", &app.lastBlogPosts);
     // anything unhandled should be checked for presence in statics folder
     router.get("*", serveStaticFiles(Path(MoodPathConfig.statics)));
 
