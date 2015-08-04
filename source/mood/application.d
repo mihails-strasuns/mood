@@ -80,7 +80,29 @@ class MoodApp
         // how many posts to retrieve
         auto n = to!uint(req.query.get("n", "5"));
 
-        auto posts = this.cache.posts_by_date[0 .. (n > $ ? $ : n)];
+        // show only posts with specific tag in feed
+        auto tag_filter = req.query.get("tag", "");
+
+        import std.algorithm : filter;
+        import std.range : take;
+
+        bool hasTag(const BlogPost* post)
+        {
+            if (tag_filter.length == 0)
+                return true;
+
+            foreach (tag; post.tags)
+            {
+                if (tag == tag_filter)
+                    return true;
+            }
+
+            return false;
+        }
+
+        auto posts = this.cache.posts_by_date
+            .filter!hasTag
+            .take(n);
         res.render!("index.dt", posts);
     }
 
