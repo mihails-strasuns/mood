@@ -26,6 +26,8 @@ struct BlogPost
     string md;
     /// Post title
     string title;
+    /// Array of post tags
+    immutable(char[])[] tags;
     /// Part of rendered blog post HTML used for short preview
     string html_intro;
     /// Full rendered blog post HTML
@@ -100,7 +102,9 @@ struct BlogPost
     // `dst` with it
     private static void parseMetadata(string src, ref BlogPost dst)
     {
-        import std.regex, std.string;
+        import std.regex;
+        import std.string : splitLines;
+        import std.array : split;
 
         static key_value = ctRegex!(r"^([^:]+): (.+)$");
 
@@ -116,6 +120,8 @@ struct BlogPost
                     dst.title = value;
                 else if (key == "Date")
                     dst.created_at = SysTime.fromISOString(value);
+                else if (key == "Tags")
+                    dst.tags = split(value);
             }
         }
     }
