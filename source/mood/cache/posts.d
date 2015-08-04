@@ -62,7 +62,7 @@ struct BlogPost
      */
     static BlogPost create(string key, string src)
     {
-        import vibe.textfilter.markdown;
+        import mood.util.markdown;
         import std.regex, std.string;
 
         BlogPost entry;
