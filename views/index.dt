@@ -10,6 +10,7 @@ html.no-js(lang='', xmlns='http://www.w3.org/1999/html')
 		link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', rel='stylesheet')
 		link(href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', rel='stylesheet')
 		link(href='/css/style.css', rel='stylesheet')
+		link(href='/css/pygments.css', rel='stylesheet')
 	body
 		header.Header
 			.Capsule
@@ -33,9 +34,10 @@ html.no-js(lang='', xmlns='http://www.w3.org/1999/html')
 				- foreach (post; posts)
 					article.article
 						header
-							h2.title !{ post.title }
+							h2.title
+								a(href='/posts/!{ post.relative_url }') !{ post.title }
 						.content
-							div !{ post.html }
+							div !{ post.html_intro }
 						footer
 							.posted !{ post.pretty_date }
 		footer.Footer

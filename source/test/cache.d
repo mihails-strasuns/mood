@@ -27,9 +27,9 @@ unittest
     cache.loadFromDisk(Path(test_dir));
 
     assert (cache.posts_by_url["url1/nested/article"].md == "# a");
-    assert (cache.posts_by_url["url1/nested/article"].html == "<h1> a</h1>\n");
+    assert (cache.posts_by_url["url1/nested/article"].html_full == "<h1> a</h1>\n");
     assert (cache.posts_by_url["url2/article"].md == "### x");
-    assert (cache.posts_by_url["url2/article"].html == "<h3> x</h3>\n");
+    assert (cache.posts_by_url["url2/article"].html_full == "<h3> x</h3>\n");
     assert (cache.posts_by_url.length == 2);
 
     // missing cache dump on disk

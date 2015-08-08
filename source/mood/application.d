@@ -36,22 +36,35 @@ class MoodApp
     /**
         Creates application instance and initializes it from
         the disk data if present
+
+        Params:
+            load_cache = if set to 'false', no data loading happens automatically
      */
-    this()
+    this(bool load_cache = true)
     {
         logInfo("Initializing Mood application");
 
-        auto markdown_sources = Path(MoodPathConfig.markdownSources);
-        logInfo("Looking for blog post sources at %s", markdown_sources);
-        this.cache.loadFromDisk(markdown_sources);
-        logInfo("%s posts loaded", this.cache.posts_by_url.length);
-        import std.range : join;
-        logTrace("\t%s", this.cache.posts_by_url.keys.join("\n\t"));
+        if (load_cache)
+        {
+            auto markdown_sources = Path(MoodPathConfig.markdownSources);
+            logInfo("Looking for blog post sources at %s", markdown_sources);
+            this.cache.loadFromDisk(markdown_sources);
+            logInfo("%s posts loaded", this.cache.posts_by_url.length);
+            import std.range : join;
+            logTrace("\t%s", this.cache.posts_by_url.keys.join("\n\t"));
+        }
 
         logInfo("Initializing Mood RESTful API");
         this.api = new MoodAPI(this.cache);
 
         logInfo("Application data is ready");
+    }
+
+    unittest
+    {
+        auto app = new MoodApp(false);
+        assert (app.cache.posts_by_url.length == 0);
+        assert (app.api !is null);
     }
 
     /**
@@ -80,7 +93,31 @@ class MoodApp
         // how many posts to retrieve
         auto n = to!uint(req.query.get("n", "5"));
 
-        auto posts = this.cache.posts_by_date[0 .. (n > $ ? $ : n)];
+        // show only posts with specific tag in feed
+        auto tag_filter = req.query.get("tag", "");
+
+        import std.algorithm : filter;
+        import std.range : take;
+
+        // predicate to check if specific blog posts has required tag
+        // always 'true' if there is no tag filter defined
+        bool hasTag(const BlogPost* post)
+        {
+            if (tag_filter.length == 0)
+                return true;
+
+            foreach (tag; post.tags)
+            {
+                if (tag == tag_filter)
+                    return true;
+            }
+
+            return false;
+        }
+
+        auto posts = this.cache.posts_by_date
+            .filter!hasTag
+            .take(n);
         res.render!("index.dt", posts);
     }
 
@@ -102,7 +139,7 @@ class MoodApp
             if (entry !is null)
             {
                 auto title = entry.title;
-                auto content = entry.html;
+                auto content = entry.html_full;
                 res.render!("single_post.dt", title, content);
             }
             else
@@ -139,4 +176,36 @@ class MoodApp
     {
         res.render!("new_post.dt");
     }
+}
+
+version (unittest)
+{
+    static this ()
+    {
+        setLogLevel(LogLevel.fatal);
+    }
+}
+
+unittest
+{
+    import vibe.http.server;
+    import vibe.inet.url;
+    import vibe.stream.memory;
+
+    auto app = new MoodApp(false);
+    auto req = createTestHTTPServerRequest(URL("/posts"), HTTPMethod.GET);
+    auto res_stream = new MemoryOutputStream;
+    auto res = createTestHTTPServerResponse(res_stream);
+
+    // best approach to testing is yet unclear
+    // only check that nothing gets thrown for empty request
+    app.lastBlogPosts(req, res);
+
+    app.singleBlogPost(req, res);
+
+    req.form["title"] = "aaa";
+    req.form["content"] = "bbb";
+    app.processNewBlogPost(req, res);
+
+    app.administration(req, res);
 }

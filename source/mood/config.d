@@ -1,5 +1,6 @@
 /**
     Defines application-wide constants in one easy to tweak place
+    dfdsf
  */
 module mood.config;
 
