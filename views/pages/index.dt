@@ -4,7 +4,7 @@ block inner
 	section.Body.Capsule.Articles
 		h1 Le blog
 		include blocks/aside
-		.articles
+		.Content
 			- foreach (post; posts)
 				article.article
 					header
