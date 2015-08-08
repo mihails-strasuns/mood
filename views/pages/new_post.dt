@@ -1,4 +1,4 @@
-extends outer-base
+extends outer
 
 block inner
     section.Body.Capsule.NewEntry

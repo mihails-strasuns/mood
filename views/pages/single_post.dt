@@ -1,0 +1,7 @@
+extends outer
+
+block inner
+    section.Body.Capsule.Articles
+        h1 !{ title }
+        include blocks/aside
+        !{ content }
