@@ -129,12 +129,6 @@ a.Button {
 .Body h1 {
   text-align: center; }
 
-.Body .aside {
-  float: right;
-  min-width: 200px;
-  max-width: 320px;
-  margin-left: 60px; }
-
 .Login .Input, .NewEntry .Input {
   display: block;
   width: 100%;
@@ -157,63 +151,70 @@ a.Button {
   min-height: 300px;
   font-family: monospace; }
 
-.Articles .author {
-  line-height: 24px;
-  color: rgba(0, 0, 0, 0.54); }
-  .Articles .author img {
-    float: left;
-    background-color: rgba(0, 0, 0, 0.12);
-    border-radius: 5px;
-    margin: 10px 10px 10px 0; }
-  .Articles .author + .Button {
-    clear: left;
-    margin-top: 20px;
-    width: 100%; }
+.Aside {
+  float: right;
+  min-width: 200px;
+  max-width: 320px;
+  margin-left: 60px; }
+  .Aside .author {
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.54); }
+    .Aside .author img {
+      float: left;
+      background-color: rgba(0, 0, 0, 0.12);
+      border-radius: 5px;
+      margin: 10px 10px 10px 0; }
+    .Aside .author + .Button {
+      clear: left;
+      margin-top: 20px;
+      width: 100%; }
 
-.Articles .articles {
+.Content {
   overflow: hidden; }
-  .Articles .articles .article {
-    color: rgba(0, 0, 0, 0.87);
-    position: relative;
-    padding: 20px 0; }
-    .Articles .articles .article + .article {
-      border-top: 1px solid rgba(0, 0, 0, 0.12); }
-    .Articles .articles .article .content {
-      text-align: justify; }
-    .Articles .articles .article footer {
-      text-align: right;
-      font-size: 12px; }
-  .Articles .articles .pages {
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 0; }
-    .Articles .articles .pages .page {
-      color: rgba(0, 0, 0, 0.54);
-      font-size: 20px;
-      line-height: 40px;
-      vertical-align: top;
-      display: inline-block;
+
+.Articles .Content .article {
+  color: rgba(0, 0, 0, 0.87);
+  position: relative;
+  padding: 20px 0; }
+  .Articles .Content .article + .article {
+    border-top: 1px solid rgba(0, 0, 0, 0.12); }
+  .Articles .Content .article .content {
+    text-align: justify; }
+  .Articles .Content .article footer {
+    text-align: right;
+    font-size: 12px; }
+
+.Articles .Content .pages {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0; }
+  .Articles .Content .pages .page {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 20px;
+    line-height: 40px;
+    vertical-align: top;
+    display: inline-block;
+    text-decoration: none;
+    height: 40px;
+    width: 30px;
+    margin: 0 1px;
+    border-radius: 6px;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out; }
+    .Articles .Content .pages .page.active, .Articles .Content .pages .page:hover:not(.disabled) {
       text-decoration: none;
-      height: 40px;
-      width: 30px;
-      margin: 0 1px;
-      border-radius: 6px;
-      cursor: pointer;
-      -webkit-transition: all 0.2s ease-in-out;
-      transition: all 0.2s ease-in-out; }
-      .Articles .articles .pages .page.active, .Articles .articles .pages .page:hover:not(.disabled) {
-        text-decoration: none;
-        color: rgba(0, 0, 0, 0.87);
-        background-color: #b2dfdb; }
-      .Articles .articles .pages .page.disabled {
-        color: rgba(0, 0, 0, 0.26);
-        cursor: default; }
-    .Articles .articles .pages .prev, .Articles .articles .pages .next {
-      font-size: 30px; }
-    .Articles .articles .pages .prev {
-      margin-right: 3px; }
-    .Articles .articles .pages .next {
-      margin-left: 3px; }
+      color: rgba(0, 0, 0, 0.87);
+      background-color: #b2dfdb; }
+    .Articles .Content .pages .page.disabled {
+      color: rgba(0, 0, 0, 0.26);
+      cursor: default; }
+  .Articles .Content .pages .prev, .Articles .Content .pages .next {
+    font-size: 30px; }
+  .Articles .Content .pages .prev {
+    margin-right: 3px; }
+  .Articles .Content .pages .next {
+    margin-left: 3px; }
 
 @media screen and (max-width: 800px) {
   .Body {

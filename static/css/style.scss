@@ -155,12 +155,6 @@ a.Button {
 	h1 {
 		text-align: center;
 	}
-	.aside {
-		float: right;
-		min-width: 200px;
-		max-width: 320px;
-		margin-left: 60px;
-	}
 }
 
 .Login .Input, .NewEntry .Input {
@@ -193,7 +187,12 @@ a.Button {
 	}
 }
 
-.Articles {
+.Aside {
+	float: right;
+	min-width: 200px;
+	max-width: 320px;
+	margin-left: 60px;
+	
 	.author {
 		line-height: 24px;
 		color: rgba(0, 0, 0, 0.54);
@@ -209,8 +208,14 @@ a.Button {
 			width: 100%;
 		}
 	}
-	.articles {
-		overflow: hidden;
+}
+
+.Content {
+	overflow: hidden;
+}
+
+.Articles {
+	.Content {
 		.article {
 			color: rgba(0, 0, 0, 0.87);
 			position: relative;
