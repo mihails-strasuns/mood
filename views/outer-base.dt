@@ -6,9 +6,8 @@ html.no-js(lang='')
 		title DLang Blog
 		meta(name='description', content='')
 		meta(name='viewport', content='width=device-width, initial-scale=1')
-		link(href='//fonts.googleapis.com/css?family=Roboto:400italic,300,700,400&subset=cyrillic,cyrillic-ext,latin', rel='stylesheet', type='text/css')
-		link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', rel='stylesheet')
-		link(href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', rel='stylesheet')
+		link(href='/css/font-awesome/css/font-awesome.css', rel='stylesheet')
+		link(href='/css/normalize.css', rel='stylesheet')
 		link(href='/css/style.css', rel='stylesheet')
 		link(href='/css/pygments.css', rel='stylesheet')
 	body
@@ -24,3 +23,4 @@ html.no-js(lang='')
 						div
 							input(name='search', type='text')
 		block inner
+		footer.Footer
