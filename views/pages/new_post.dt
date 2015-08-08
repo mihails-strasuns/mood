@@ -3,7 +3,7 @@ extends outer
 block inner
     section.Body.Capsule.NewEntry
         h1 New blog post
-            form.newpost(action='/posts', method='post')
-                input.Input(type='text', name='title', placeholder='Title')
-                textarea.Input(name='content', placeholder='Content')
-                button.Button(type='submit') Post
+        form.newpost(action='/posts', method='post')
+            input.Input(type='text', name='title', placeholder='Title')
+            textarea.Input(name='content', placeholder='Content')
+            button.Button(type='submit') Post

@@ -15,7 +15,7 @@ html.no-js(lang='')
 			.Capsule
 				a.home(href='/')
 					span.fa.fa-home
-				a.login(href='/login.html')
+				a.login(href='/admin')
 					span.fa.fa-lock
 				.search
 					label.input
