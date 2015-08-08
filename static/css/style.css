@@ -1,7 +1,7 @@
 body {
   font-family: sans-serif;
   font-size: 16px;
-  line-height: 1.75;
+  line-height: 1.2;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   min-height: 100%; }
@@ -148,14 +148,14 @@ a.Button {
   margin: 0 auto; }
 
 .NewEntry .newpost {
-  max-width: 600px;
   margin: auto; }
 
 .NewEntry .Input[name="title"] {
   font-size: 24px; }
 
 .NewEntry .Input[name="content"] {
-  min-height: 300px; }
+  min-height: 300px;
+  font-family: monospace; }
 
 .Articles .author {
   line-height: 24px;
