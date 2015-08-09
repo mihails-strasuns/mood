@@ -1,5 +1,13 @@
 aside.Aside
-	.author
+	
+	//- information about the author - remove //- to show
+	//-.author
 		img(src='http://placehold.it/200', height='100', width='100')
 		| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
-	a.Button(href='/newentry.html') New entry
+		
+	ul.posts
+		- foreach(post; posts_by_date)
+			li
+				a(href='/posts/!{ post.relative_url }') !{ post.title }
+					
+	a.Button(href='/admin') New entry
