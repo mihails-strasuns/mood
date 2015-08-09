@@ -4,3 +4,5 @@
 /certs
 __test_library__
 .swp
+*.iml
+.idea
