@@ -20,63 +20,10 @@ import mood.cache.core;
  */
 struct BlogPost
 {
-    import std.datetime;
-
-    /// Markdown sources for the blog post
-    string md;
-    /// Post title
-    string title;
-    /// Array of post tags
-    immutable(char[])[] tags;
-    /// Part of rendered blog post HTML used for short preview
-    string html_intro;
-    /// Full rendered blog post HTML
-    string html_full;
-    /// Post creation date
-    SysTime created_at;
-    /// Relative path/url for that specific post (also used as cache key)
-    string relative_url;
-
-    /**
-        Keeps only date part of creation timestamp and formats it in
-        a simple human-readable form (with a month as a word)
-
-        Returns:
-            formatted date string for insertion into rendered pages
-     */
-    string pretty_date() const @property
-    {
-        return (cast(Date) this.created_at).toSimpleString();
-    }
-
-    string pretty_month() const @property
-    {
-        import std.string : format;
-
-        string month_word = () {
-            final switch (this.created_at.month)
-            {
-                case Month.jan: return "January";
-                case Month.feb: return "February";
-                case Month.mar: return "March";
-                case Month.apr: return "April";
-                case Month.may: return "May";
-                case Month.jun: return "June";
-                case Month.jul: return "July";
-                case Month.aug: return "August";
-                case Month.sep: return "September";
-                case Month.oct: return "October";
-                case Month.nov: return "November";
-                case Month.dec: return "December";
-            }
-        } ();
-
-        return format(
-            "%s %s",
-            this.created_at.year,
-            month_word
-        );
-    }
+    // Reuse metadata definition from API
+    static import mood.api.spec;
+    mood.api.spec.BlogPost metadata;
+    alias metadata this;
 
     /**
         Creates a new blog post data entry from a given raw source
@@ -134,6 +81,7 @@ struct BlogPost
         import std.regex;
         import std.string : splitLines;
         import std.array : split;
+        import std.datetime : SysTime;
 
         static key_value = ctRegex!(r"^([^:]+): (.+)$");
 

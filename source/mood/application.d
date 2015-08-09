@@ -96,28 +96,9 @@ class MoodApp
         // show only posts with specific tag in feed
         auto tag_filter = req.query.get("tag", "");
 
-        import std.algorithm : filter;
+        auto posts = this.api.getPosts(n, tag_filter);
+
         import std.range : take;
-
-        // predicate to check if specific blog posts has required tag
-        // always 'true' if there is no tag filter defined
-        bool hasTag(const BlogPost* post)
-        {
-            if (tag_filter.length == 0)
-                return true;
-
-            foreach (tag; post.tags)
-            {
-                if (tag == tag_filter)
-                    return true;
-            }
-
-            return false;
-        }
-
-        auto posts = this.cache.posts_by_date
-            .filter!hasTag
-            .take(n);
         auto last_posts = this.cache.posts_by_date.take(10);
         res.render!("pages/index.dt", posts, last_posts);
     }

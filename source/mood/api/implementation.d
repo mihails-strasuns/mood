@@ -8,12 +8,12 @@ import mood.api.spec;
 ///
 class MoodAPI : mood.api.spec.MoodAPI
 {
-    import mood.cache.posts;
+    import Cache = mood.cache.posts;
 
-    private BlogPosts* cache;
+    private Cache.BlogPosts* cache;
 
     ///
-    this (ref BlogPosts cache)
+    this (ref Cache.BlogPosts cache)
     {
         this.cache = &cache;
     }
@@ -106,6 +106,48 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             return PostAddingResult(url);
         }
+
+        /**
+            Get last n posts that match (optional) tag.
+
+            Params:
+                n = amount of posts to get
+                tag = if not empty, only last n posts that match this
+                    tag are retrieved
+
+            Returns:
+                arrays of blog post metadata entries
+         */
+        const(BlogPost)[] getPosts(uint n, string tag)
+        {
+            import std.algorithm : filter, map;
+            import std.range : take;
+            import std.array : array;
+
+            // predicate to check if specific blog posts has required tag
+            // always 'true' if there is no tag filter defined
+            bool hasTag(const Cache.BlogPost* post)
+            {
+                if (tag.length == 0)
+                    return true;
+
+                foreach (post_tag; post.tags)
+                {
+                    if (post_tag == tag)
+                        return true;
+                }
+
+                return false;
+            }
+
+            return this.cache.posts_by_date
+                .filter!hasTag
+                .take(n)
+                .map!(x => x.metadata)
+                .array;
+        }
+
+    // end of `override:`
 }
 
 import vibe.core.log;
