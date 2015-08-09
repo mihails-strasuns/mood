@@ -3,6 +3,6 @@
 /mood
 /certs
 __test_library__
-.swp
+*.swp
 *.iml
 .idea
