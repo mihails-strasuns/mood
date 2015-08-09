@@ -49,6 +49,35 @@ struct BlogPost
         return (cast(Date) this.created_at).toSimpleString();
     }
 
+    string pretty_month() const @property
+    {
+        import std.string : format;
+
+        string month_word = () {
+            final switch (this.created_at.month)
+            {
+                case Month.jan: return "January";
+                case Month.feb: return "February";
+                case Month.mar: return "March";
+                case Month.apr: return "April";
+                case Month.may: return "May";
+                case Month.jun: return "June";
+                case Month.jul: return "July";
+                case Month.aug: return "August";
+                case Month.sep: return "September";
+                case Month.oct: return "October";
+                case Month.nov: return "November";
+                case Month.dec: return "December";
+            }
+        } ();
+
+        return format(
+            "%s %s",
+            this.created_at.year,
+            month_word
+        );
+    }
+
     /**
         Creates a new blog post data entry from a given raw source
 

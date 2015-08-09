@@ -118,7 +118,8 @@ class MoodApp
         auto posts = this.cache.posts_by_date
             .filter!hasTag
             .take(n);
-        res.render!("pages/index.dt", posts);
+        auto last_posts = this.cache.posts_by_date.take(10);
+        res.render!("pages/index.dt", posts, last_posts);
     }
 
     /**
@@ -140,7 +141,9 @@ class MoodApp
             {
                 auto title = entry.title;
                 auto content = entry.html_full;
-                res.render!("pages/single_post.dt", title, content);
+                import std.range : take;
+                auto last_posts = this.cache.posts_by_date.take(10);
+                res.render!("pages/single_post.dt", title, content, last_posts);
             }
             else
                 logTrace("Missing entry '%s' was requested", capture.hit);
