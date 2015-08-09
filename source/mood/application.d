@@ -203,9 +203,12 @@ unittest
 
     app.singleBlogPost(req, res);
 
+    // disabled for now because it does I/O
+    /*
     req.form["title"] = "aaa";
     req.form["content"] = "bbb";
     app.processNewBlogPost(req, res);
+    */
 
     app.administration(req, res);
 }
