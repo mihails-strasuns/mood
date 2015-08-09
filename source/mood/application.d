@@ -82,27 +82,67 @@ class MoodApp
         Renders page with latest blog post feed, sorted by date
 
         Each post is rendered in form of short summary and link to dedicated
-        post page. Query parameter `n` control how many posts to render on
-        this page
+        post page.
+        
+        Query parameters:
+            n = controls how many posts to render on this page
+            tag = show only posts that have this specified tag
      */
     @path("/posts") @method(HTTPMethod.GET)
     void lastBlogPosts(HTTPServerRequest req, HTTPServerResponse res)
     {
-        import std.conv : to;
-
-        // how many posts to retrieve
-        auto n = to!uint(req.query.get("n", "5"));
-
-        // show only posts with specific tag in feed
-        auto tag_filter = req.query.get("tag", "");
-
-        auto posts = this.api.getPosts(n, tag_filter);
+        auto options = this.feedOptionsFromRequest(req);
+        auto posts = this.api.getPosts(options.n, options.tag);
 
         import std.range : take;
         auto last_posts = this.cache.posts_by_date
             .take(MoodViewConfig.sidePanelSize);
 
         res.render!("pages/index.dt", posts, last_posts);
+    }
+
+    /**
+        Renders RSS XML feed for latest blog posts. Query parameter `n`
+        control
+
+        Query parameters:
+            n = controls how many posts to render on this page
+            tag = show only posts that have this specified tag
+     */
+    @path("/posts.rss") @method(HTTPMethod.GET)
+    void lastBlogPostRSS(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        import std.string : format;
+
+        auto options = this.feedOptionsFromRequest(req);
+        auto posts = this.api.getPosts(options.n, options.tag);
+
+        string base_url = "INSERT-YOUR-URL";
+
+        string genItem(const mood.api.spec.BlogPost post)
+        {
+            return format(
+                "<item><title>%s</title><link>%s</link><pubDate>%s</pubDate></item>\n",
+                post.title,
+                base_url ~ "/" ~ post.relative_url,
+                post.created_at.toISOString()
+            );
+        }
+
+        import std.algorithm : map;
+        import std.range : join;
+        auto feed = posts.map!genItem.join();
+          
+        auto xml = format(
+            // feed data
+            "<?xml version='1.0' encoding='UTF-8' ?><rss version='2.0'>\n"
+                ~ "<channel>\n<title>INSERT-YOUR-TITLE</title>\n"
+                ~ "<link>%s</link>\n%s</channel>\n</rss>",
+            base_url,
+            feed
+        );
+
+        res.writeBody(xml);
     }
 
     /**
@@ -164,6 +204,24 @@ class MoodApp
     void administration(HTTPServerRequest req, HTTPServerResponse res)
     {
         res.render!("pages/new_post.dt");
+    }
+
+    private auto feedOptionsFromRequest(HTTPServerRequest req)
+    {
+        struct FeedOptions
+        {
+            // how many posts to retrieve
+            uint n;
+            // show only posts with specific tag in feed
+            string tag;
+        }
+
+        import std.conv : to;
+
+        auto n = to!uint(req.query.get("n", "5"));
+        auto tag = req.query.get("tag", "");
+
+        return FeedOptions(n, tag);
     }
 }
 
