@@ -1,0 +1,21 @@
+aside.Aside
+	
+	//- information about the author - remove //- to show
+	//-.author
+		img(src='http://placehold.it/200', height='100', width='100')
+		| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
+	
+	.postsByMonth
+		.month
+			<h4>August 2015</h4>
+			ul.posts
+				- foreach(post; posts_by_date)
+					li
+						a(href='/posts/!{ post.relative_url }', title='!{ post.created_at.toSimpleString() }') !{ post.title }
+			<h4>July 2015</h4>
+			ul.posts
+				- foreach(post; posts_by_date)
+					li
+						a(href='/posts/!{ post.relative_url }', title='!{ post.created_at.toSimpleString() }') !{ post.title }
+					
+	a.Button(href='/admin') New entry

@@ -118,7 +118,8 @@ class MoodApp
         auto posts = this.cache.posts_by_date
             .filter!hasTag
             .take(n);
-        res.render!("index.dt", posts);
+        auto posts_by_date = this.cache.posts_by_date;
+        res.render!("pages/index.dt", posts, posts_by_date);
     }
 
     /**
@@ -140,7 +141,8 @@ class MoodApp
             {
                 auto title = entry.title;
                 auto content = entry.html_full;
-                res.render!("single_post.dt", title, content);
+                auto posts_by_date = this.cache.posts_by_date;
+                res.render!("pages/single_post.dt", title, content, posts_by_date);
             }
             else
                 logTrace("Missing entry '%s' was requested", capture.hit);
@@ -174,7 +176,7 @@ class MoodApp
     @path("/admin") @method(HTTPMethod.GET) @auth
     void administration(HTTPServerRequest req, HTTPServerResponse res)
     {
-        res.render!("new_post.dt");
+        res.render!("pages/new_post.dt");
     }
 }
 
