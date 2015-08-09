@@ -15,6 +15,15 @@ html.no-js(lang='')
 			.Capsule
 				a.home(href='/')
 					span.fa.fa-home
+				ul.menu
+					li
+						a(href='/?tag=fun')
+							i(class='fa fa-soccer-ball-o')
+							| Fun
+					li
+						a(href='/?tag=work')
+							i(class='fa fa-suitcase')
+							| Work
 				a.login(href='/admin')
 					span.fa.fa-lock
 				.search

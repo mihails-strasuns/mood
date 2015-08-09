@@ -74,9 +74,32 @@ a.Button {
     float: left;
     font-size: 30px; }
     .Header .home:hover {
+      color: whitesmoke;
       background: #00796b; }
   .Header .login {
     float: right; }
+  .Header .menu {
+    float: left;
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    .Header .menu li {
+      float: left; }
+      .Header .menu li a {
+        display: block;
+        height: 60px;
+        line-height: 60px;
+        padding: 0 10px;
+        margin: 0 4px;
+        font-size: 20px;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.54);
+        border-radius: 5px;
+        -webkit-transition: all 0.2s ease-out;
+        transition: all 0.2s ease-out; }
+        .Header .menu li a:hover {
+          color: whitesmoke;
+          background: #00796b; }
   .Header .home, .Header .login {
     height: 60px;
     line-height: 60px;
@@ -84,8 +107,8 @@ a.Button {
     text-align: center;
     color: rgba(255, 255, 255, 0.54);
     border-radius: 5px;
-    -webkit-transition: background 0.2s ease-out;
-    transition: background 0.2s ease-out; }
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out; }
   .Header .search {
     min-height: 60px;
     max-width: 300px;
