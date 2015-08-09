@@ -172,11 +172,13 @@ a.Button {
       clear: left;
       margin-top: 20px;
       width: 100%; }
-  .Aside .posts {
+  .Aside .postsByMonth h4 {
+    margin-bottom: 4px; }
+  .Aside .postsByMonth .posts {
     list-style: none;
-    margin: 24px 0;
+    margin: 4px 0 24px 8px;
     padding: 0; }
-    .Aside .posts li {
+    .Aside .postsByMonth .posts li {
       line-height: 1.5em; }
 
 .Content {

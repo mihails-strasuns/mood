@@ -213,12 +213,17 @@ a.Button {
 		}
 	}
 	
-	.posts {
-		list-style: none;
-		margin: 24px 0;
-		padding: 0;
-		li {
-			line-height: 1.5em;
+	.postsByMonth {
+		h4 {
+			margin-bottom: 4px;
+		}
+		.posts {
+			list-style: none;
+			margin: 4px 0 24px 8px;
+			padding: 0;
+			li {
+				line-height: 1.5em;
+			}
 		}
 	}
 }
