@@ -99,7 +99,9 @@ class MoodApp
         auto posts = this.api.getPosts(n, tag_filter);
 
         import std.range : take;
-        auto last_posts = this.cache.posts_by_date.take(10);
+        auto last_posts = this.cache.posts_by_date
+            .take(MoodViewConfig.sidePanelSize);
+
         res.render!("pages/index.dt", posts, last_posts);
     }
 
@@ -122,8 +124,11 @@ class MoodApp
             {
                 auto title = entry.title;
                 auto content = entry.html_full;
+
                 import std.range : take;
-                auto last_posts = this.cache.posts_by_date.take(10);
+                auto last_posts = this.cache.posts_by_date
+                    .take(MoodViewConfig.sidePanelSize);
+
                 res.render!("pages/single_post.dt", title, content, last_posts);
             }
             else

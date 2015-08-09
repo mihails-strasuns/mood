@@ -18,6 +18,15 @@ enum MoodPathConfig
 }
 
 /**
+    Used to tweak various rendering options
+ */
+enum MoodViewConfig
+{
+    // how many blog post links to display in side panel
+    sidePanelSize = 10,
+}
+
+/**
     Used to identify blog owner
  */
 enum MoodAuthConfig
