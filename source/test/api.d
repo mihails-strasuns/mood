@@ -21,12 +21,12 @@ unittest
 
     // tested objects
     BlogPosts cache;
-    auto api = new MoodAPI(cache);
+    auto api = new MoodAPI;
 
     // tests
     try
     {
-        api.getPostSource("0000", "00", "title");
+        api.getPost("0000", "00", "title");
         assert (false);
     }
     catch (HTTPStatusException e)
@@ -42,9 +42,9 @@ unittest
     auto ret = api.addPost("some title", "content");
     assert (ret.url == expected_url);
 
-    auto md = api.getPostSource(year, month, "some_title");
+    auto entry = api.getPost(year, month, "some_title");
     // avoid figuring out exact timestamp stored
     import std.regex;
-    md = md.replaceAll(regex(r"Date: .+"), "XXX");
+    auto md = entry.md.replaceAll(regex(r"Date: .+"), "XXX");
     assert (md == "<!--\nTitle: some title\nXXX\n-->\ncontent");
 }

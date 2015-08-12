@@ -4,18 +4,30 @@
 module mood.api.implementation;
 
 import mood.api.spec;
+import vibe.core.log;
 
 ///
 class MoodAPI : mood.api.spec.MoodAPI
 {
+    import mood.config;
     import Cache = mood.cache.posts;
 
-    private Cache.BlogPosts* cache;
+    private Cache.BlogPosts cache;
 
     ///
-    this (ref Cache.BlogPosts cache)
+    this ()
     {
-        this.cache = &cache;
+        version (unittest) { /* use empty data set for tests */ }
+        {
+            logInfo("Preparing blog post data");
+
+            auto markdown_sources = Path(MoodPathConfig.markdownSources);
+            logInfo("Looking for blog post sources at %s", markdown_sources);
+            this.cache.loadFromDisk(markdown_sources);
+            logInfo("%s posts loaded", this.cache.posts_by_url.length);
+            import std.range : join;
+            logTrace("\t%s", this.cache.posts_by_url.keys.join("\n\t"));
+        }
     }
 
     override:
@@ -35,16 +47,24 @@ class MoodAPI : mood.api.spec.MoodAPI
                 HTTPStatusException (with status NotFound) if requested post
                 is not found in cache
         */
-        string getPostSource(string _year, string _month, string _title)
+        BlogPost getPost(string _year, string _month, string _title)
         {
             import std.format : format;
             import vibe.http.common;
 
             auto url = format("%s/%s/%s", _year, _month, _title);
-            auto content = url in this.cache.posts_by_url;
+            return this.getPost(url);
+        }
+
+        /// ditto
+        BlogPost getPost(string rel_url)
+        {
+            import vibe.http.common;
+
+            auto content = rel_url in this.cache.posts_by_url;
             if (content is null)
                 throw new HTTPStatusException(HTTPStatus.NotFound);
-            return (*content).md;
+            return (*content).metadata;
         }
 
         /**
@@ -118,7 +138,7 @@ class MoodAPI : mood.api.spec.MoodAPI
             Returns:
                 arrays of blog post metadata entries
          */
-        const(BlogPost)[] getPosts(uint n, string tag)
+        const(BlogPost)[] getPosts(uint n, string tag = "")
         {
             import std.algorithm : filter, map;
             import std.range : take;

@@ -22,13 +22,12 @@ interface MoodAPI
         Returns:
             markdown source of the matching post as string
      */
-    @path("posts/sources/:year/:month/:title")
-    string getPostSource(string _year, string _month, string _title);
+    @path("posts/:year/:month/:title")
+    BlogPost getPost(string _year, string _month, string _title);
 
-    struct PostAddingResult
-    {
-        string url;
-    }
+    /// ditto
+    @path("posts")
+    BlogPost getPost(string rel_url);
 
     /**
         Add new posts to cache, store it in the filesystem and generate
@@ -44,6 +43,11 @@ interface MoodAPI
     */
     @path("posts")
     PostAddingResult addPost(string title, string content);
+
+    struct PostAddingResult
+    {
+        string url;
+    }
 
     /**
         Get last n posts that match (optional) tag.

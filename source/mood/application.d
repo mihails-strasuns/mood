@@ -15,55 +15,30 @@ import mood.util.route_attr;
 /**
     Application data type
 
-    Mood uses one instance of this struct to handle HTTP requests
-    that need access to cached in-memory data
+    Take 
  */
 class MoodApp
 {
     import vibe.http.server;
     import vibe.inet.path : Path;
 
-    import mood.cache.posts;
     import mood.config;
     import mood.api.implementation;
 
-    private
-    {
-        BlogPosts cache;
-        MoodAPI   api;
-    }
+    private MoodAPI api;
 
     /**
         Creates application instance and initializes it from
         the disk data if present
-
-        Params:
-            load_cache = if set to 'false', no data loading happens automatically
      */
-    this(bool load_cache = true)
+    this()
     {
-        logInfo("Initializing Mood application");
-
-        if (load_cache)
-        {
-            auto markdown_sources = Path(MoodPathConfig.markdownSources);
-            logInfo("Looking for blog post sources at %s", markdown_sources);
-            this.cache.loadFromDisk(markdown_sources);
-            logInfo("%s posts loaded", this.cache.posts_by_url.length);
-            import std.range : join;
-            logTrace("\t%s", this.cache.posts_by_url.keys.join("\n\t"));
-        }
-
-        logInfo("Initializing Mood RESTful API");
-        this.api = new MoodAPI(this.cache);
-
-        logInfo("Application data is ready");
+        this.api = new MoodAPI;
     }
 
     unittest
     {
-        auto app = new MoodApp(false);
-        assert (app.cache.posts_by_url.length == 0);
+        auto app = new MoodApp;
         assert (app.api !is null);
     }
 
@@ -71,7 +46,7 @@ class MoodApp
         Requests that don't need rendering are served by RESTful API object
 
         Returns:
-            RESTful API object bound to this application cache
+            RESTful API object used by this application renderers
      */
     MoodAPI API()
     {
@@ -95,8 +70,7 @@ class MoodApp
         auto posts = this.api.getPosts(options.n, options.tag);
 
         import std.range : take;
-        auto last_posts = this.cache.posts_by_date
-            .take(MoodViewConfig.sidePanelSize);
+        auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
 
         res.render!("pages/index.dt", posts, last_posts);
     }
@@ -159,20 +133,22 @@ class MoodApp
         auto capture = matchFirst(req.path, post_pattern);
         if (!capture.empty)
         {
-            auto entry = capture.hit in this.cache.posts_by_url;
-            if (entry !is null)
+            try
             {
+                auto entry = this.api.getPost(capture.hit);
                 auto title = entry.title;
                 auto content = entry.html_full;
 
                 import std.range : take;
-                auto last_posts = this.cache.posts_by_date
-                    .take(MoodViewConfig.sidePanelSize);
+                auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
 
                 res.render!("pages/single_post.dt", title, content, last_posts);
             }
-            else
+            catch (HTTPStatusException)
+            {
                 logTrace("Missing entry '%s' was requested", capture.hit);
+                return;
+            }
         }
     }
 
@@ -239,7 +215,7 @@ unittest
     import vibe.inet.url;
     import vibe.stream.memory;
 
-    auto app = new MoodApp(false);
+    auto app = new MoodApp;
     auto req = createTestHTTPServerRequest(URL("/posts"), HTTPMethod.GET);
     auto res_stream = new MemoryOutputStream;
     auto res = createTestHTTPServerResponse(res_stream);
