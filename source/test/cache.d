@@ -2,7 +2,7 @@ module test.cache;
 
 import test.env : rootDir;
 
-import mood.cache.posts;
+import mood.storage.posts;
 
 unittest
 {
@@ -23,7 +23,7 @@ unittest
 
     // most common workflow
 
-    BlogPosts cache;
+    BlogPostStorage cache;
     cache.loadFromDisk(Path(test_dir));
 
     assert (cache.posts_by_url["url1/nested/article"].md == "# a");

@@ -3,7 +3,7 @@ module test.api;
 import test.env : rootDir;
 
 import mood.api.implementation;
-import mood.cache.posts;
+import mood.storage.posts;
 
 import vibe.http.common;
 import std.datetime;
@@ -20,7 +20,7 @@ unittest
         chdir(rootDir);
 
     // tested objects
-    BlogPosts cache;
+    BlogPostStorage cache;
     auto api = new MoodAPI;
 
     // tests

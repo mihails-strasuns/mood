@@ -14,8 +14,6 @@ import mood.util.route_attr;
 
 /**
     Application data type
-
-    Take 
  */
 class MoodApp
 {

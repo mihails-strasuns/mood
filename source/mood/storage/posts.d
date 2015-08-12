@@ -4,25 +4,25 @@
     Provides struct definition for a single blog post data and cache implementation
     to store those
  */
-module mood.cache.posts;
+module mood.storage.posts;
 
 import vibe.core.log;
-import mood.cache.core;
+import mood.storage.generic_cache;
 
 /**
     Aggregates single blog post content and any related metadata
 
-    Used as a cache element. `BlogPosts` will call `BlogPost.create`
+    Used as a cache element. `BlogPostStorage` will call `CachedBlogPost.create`
     when loading dumped blog post data from disk to interpret it in
     meaningful way
     
     All non-static methods must be defined to work on const `this`
  */
-struct BlogPost
+struct CachedBlogPost
 {
     // Reuse metadata definition from API
-    static import mood.api.spec;
-    mood.api.spec.BlogPost metadata;
+    import mood.api.spec;
+    BlogPost metadata;
     alias metadata this;
 
     /**
@@ -38,12 +38,12 @@ struct BlogPost
         Returns:
             new blog post data, by value
      */
-    static BlogPost create(string key, string src)
+    static typeof(this) create(string key, string src)
     {
         import mood.util.markdown;
         import std.regex, std.string;
 
-        BlogPost entry;
+        typeof(return) entry;
         entry.relative_url = key;
         entry.md = src;
         entry.html_full = filterMarkdown(src, MarkdownFlags.backtickCodeBlocks);
@@ -76,7 +76,7 @@ struct BlogPost
 
     // parses metadats expected in HTML comments in `src` and fills
     // `dst` with it
-    private static void parseMetadata(string src, ref BlogPost dst)
+    private static void parseMetadata(string src, ref CachedBlogPost dst)
     {
         import std.regex;
         import std.string : splitLines;
@@ -105,21 +105,21 @@ struct BlogPost
 }
 
 /**
-    Immutable data cache for collection of `BlogPost` entries
+    Immutable data cache for collection of entries embedding `BlogPost`
 
     Builds on top of `mood.cache.core.Cache` adding semantics
     more convenient for using this struct as a data field of application
     class
  */
-struct BlogPosts
+struct BlogPostStorage
 {
     import vibe.inet.path : Path;
     import std.algorithm : sort, map;
 
     private:
 
-        Cache!BlogPost cache;
-        immutable(BlogPost)*[] by_date;
+        Cache!CachedBlogPost cache;
+        immutable(CachedBlogPost)*[] by_date;
 
     public:
 
@@ -190,7 +190,7 @@ unittest
 {
     import std.datetime : SysTime;
 
-    BlogPosts cache;
+    BlogPostStorage cache;
 
     cache.add("/url", "# abcd");
     assert (cache.posts_by_url["/url"].html_full == "<h1> abcd</h1>\n");

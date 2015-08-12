@@ -10,9 +10,9 @@ import vibe.core.log;
 class MoodAPI : mood.api.spec.MoodAPI
 {
     import mood.config;
-    import Cache = mood.cache.posts;
+    import mood.storage.posts;
 
-    private Cache.BlogPosts cache;
+    private BlogPostStorage storage;
 
     ///
     this ()
@@ -23,10 +23,10 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             auto markdown_sources = Path(MoodPathConfig.markdownSources);
             logInfo("Looking for blog post sources at %s", markdown_sources);
-            this.cache.loadFromDisk(markdown_sources);
-            logInfo("%s posts loaded", this.cache.posts_by_url.length);
+            this.storage.loadFromDisk(markdown_sources);
+            logInfo("%s posts loaded", this.storage.posts_by_url.length);
             import std.range : join;
-            logTrace("\t%s", this.cache.posts_by_url.keys.join("\n\t"));
+            logTrace("\t%s", this.storage.posts_by_url.keys.join("\n\t"));
         }
     }
 
@@ -45,7 +45,7 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             Throws:
                 HTTPStatusException (with status NotFound) if requested post
-                is not found in cache
+                is not found in storage
         */
         BlogPost getPost(string _year, string _month, string _title)
         {
@@ -61,14 +61,14 @@ class MoodAPI : mood.api.spec.MoodAPI
         {
             import vibe.http.common;
 
-            auto content = rel_url in this.cache.posts_by_url;
+            auto content = rel_url in this.storage.posts_by_url;
             if (content is null)
                 throw new HTTPStatusException(HTTPStatus.NotFound);
             return (*content).metadata;
         }
 
         /**
-            Add new posts to cache, store it in the filesystem and generate
+            Add new posts to storage, store it in the filesystem and generate
             actual post HTML
 
             Params:
@@ -122,7 +122,7 @@ class MoodAPI : mood.api.spec.MoodAPI
             writeFileUTF8(file, markdown);
 
             auto url = prefix ~ "/" ~ title;
-            this.cache.add(url, markdown);
+            this.storage.add(url, markdown);
 
             return PostAddingResult(url);
         }
@@ -146,7 +146,7 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             // predicate to check if specific blog posts has required tag
             // always 'true' if there is no tag filter defined
-            bool hasTag(const Cache.BlogPost* post)
+            bool hasTag(const CachedBlogPost* post)
             {
                 if (tag.length == 0)
                     return true;
@@ -160,7 +160,7 @@ class MoodAPI : mood.api.spec.MoodAPI
                 return false;
             }
 
-            return this.cache.posts_by_date
+            return this.storage.posts_by_date
                 .filter!hasTag
                 .take(n)
                 .map!(x => x.metadata)

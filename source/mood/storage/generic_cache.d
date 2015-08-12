@@ -1,7 +1,7 @@
 /**
     Basic content-agnostic cache implementation
  */
-module mood.cache.core;
+module mood.storage.generic_cache;
 
 /**
     Cache is defined as shared pointer to immutable cache data. When cache
