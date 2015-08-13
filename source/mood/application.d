@@ -114,22 +114,21 @@ class MoodApp
         auto capture = matchFirst(req.path, post_pattern);
         if (!capture.empty)
         {
+            auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
+
+            BlogPost entry;
+
             try
             {
-                auto entry = this.api.getPost(capture.hit);
-                auto title = entry.title;
-                auto content = entry.html_full;
-
-                import std.range : take;
-                auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
-
-                res.render!("pages/single_post.dt", title, content, last_posts);
+                entry = this.api.getPost(capture.hit);
             }
             catch (HTTPStatusException)
             {
                 logTrace("Missing entry '%s' was requested", capture.hit);
                 return;
             }
+
+            HTML.renderSinglePost(res.bodyWriter, entry, last_posts);
         }
     }
 

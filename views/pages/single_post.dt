@@ -2,7 +2,7 @@ extends outer
 
 block inner
     section.Body.Capsule.Article
-        h1 !{ title }
+        h1 !{ post.title }
         include blocks/aside
         .Content
-            !{ content }
+            !{ post.html_full }

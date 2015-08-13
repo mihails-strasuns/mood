@@ -6,6 +6,8 @@ module mood.api.implementation;
 import mood.api.spec;
 import vibe.core.log;
 
+public import mood.api.spec : BlogPost;
+
 ///
 class MoodAPI : mood.api.spec.MoodAPI
 {

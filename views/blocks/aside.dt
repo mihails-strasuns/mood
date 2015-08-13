@@ -11,6 +11,6 @@ aside.Aside
 			.month
 				h4 !{ month_group.front.pretty_month }
 				ul.posts
-					- foreach (post; month_group)
+					- foreach (listed_post; month_group)
 						li
-							a(href='/posts/!{ post.relative_url }') !{ post.title }
+							a(href='/posts/!{ listed_post.relative_url }') !{ listed_post.title }
