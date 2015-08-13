@@ -1,16 +1,16 @@
 aside.Aside
-	
-	//- information about the author - remove //- to show
-	//-.author
-		img(src='http://placehold.it/200', height='100', width='100')
-		| Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
-	
-	.postsByMonth
-		- import std.algorithm, std.datetime;
-		- foreach (month_group; last_posts.chunkBy!((a, b) => a.created_at.month == b.created_at.month))
-			.month
-				h4 !{ month_group.front.pretty_month }
-				ul.posts
-					- foreach (listed_post; month_group)
-						li
-							a(href='/posts/!{ listed_post.relative_url }') !{ listed_post.title }
+  
+  //- information about the author - remove //- to show
+  //-.author
+    img(src='http://placehold.it/200', height='100', width='100')
+    | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
+  
+  .postsByMonth
+    - import std.algorithm, std.datetime;
+    - foreach (month_group; last_posts.chunkBy!((a, b) => a.created_at.month == b.created_at.month))
+      .month
+        h4 !{ month_group.front.pretty_month }
+        ul.posts
+          - foreach (listed_post; month_group)
+            li
+              a(href='/posts/!{ listed_post.relative_url }') !{ listed_post.title }
