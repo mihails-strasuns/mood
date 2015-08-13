@@ -22,6 +22,8 @@ class MoodApp
 
     import mood.config;
     import mood.api.implementation;
+    import HTML = mood.rendering.html;
+    import RSS = mood.rendering.rss;
 
     private MoodAPI api;
 
@@ -64,13 +66,15 @@ class MoodApp
     @path("/posts") @method(HTTPMethod.GET)
     void lastBlogPosts(HTTPServerRequest req, HTTPServerResponse res)
     {
-        auto options = this.feedOptionsFromRequest(req);
-        auto posts = this.api.getPosts(options.n, options.tag);
+        void renderer(uint n, string tag)
+        {
+            auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
+            auto posts = this.api.getPosts(n, tag);
+	        res.headers["Content-Type"] = "text/html; charset=UTF-8";
+            HTML.renderIndex(res.bodyWriter, posts, last_posts);
+        }
 
-        import std.range : take;
-        auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
-
-        res.render!("pages/index.dt", posts, last_posts);
+        this.feedOptionsFromRequest(req, &renderer);
     }
 
     /**
@@ -86,35 +90,14 @@ class MoodApp
     {
         import std.string : format;
 
-        auto options = this.feedOptionsFromRequest(req);
-        auto posts = this.api.getPosts(options.n, options.tag);
-
-        string base_url = "INSERT-YOUR-URL";
-
-        string genItem(const mood.api.spec.BlogPost post)
+        void renderer(uint n, string tag)
         {
-            return format(
-                "<item><title>%s</title><link>%s</link><pubDate>%s</pubDate></item>\n",
-                post.title,
-                base_url ~ "/" ~ post.relative_url,
-                post.created_at.toISOString()
-            );
+            auto posts = this.api.getPosts(n, tag);
+	        res.headers["Content-Type"] = "text/xml; charset=UTF-8";
+            RSS.renderFeed(res.bodyWriter, posts);
         }
 
-        import std.algorithm : map;
-        import std.range : join;
-        auto feed = posts.map!genItem.join();
-          
-        auto xml = format(
-            // feed data
-            "<?xml version='1.0' encoding='UTF-8' ?><rss version='2.0'>\n"
-                ~ "<channel>\n<title>INSERT-YOUR-TITLE</title>\n"
-                ~ "<link>%s</link>\n%s</channel>\n</rss>",
-            base_url,
-            feed
-        );
-
-        res.writeBody(xml);
+        this.feedOptionsFromRequest(req, &renderer);
     }
 
     /**
@@ -180,22 +163,17 @@ class MoodApp
         res.render!("pages/new_post.dt");
     }
 
-    private auto feedOptionsFromRequest(HTTPServerRequest req)
+    private void feedOptionsFromRequest(HTTPServerRequest req,
+        void delegate (uint n, string tag) renderer)
     {
-        struct FeedOptions
-        {
-            // how many posts to retrieve
-            uint n;
-            // show only posts with specific tag in feed
-            string tag;
-        }
-
         import std.conv : to;
 
+        // how many posts to retrieve
         auto n = to!uint(req.query.get("n", "5"));
+        // show only posts with specific tag in feed
         auto tag = req.query.get("tag", "");
 
-        return FeedOptions(n, tag);
+        renderer(n, tag);
     }
 }
 
