@@ -1,19 +1,19 @@
 server {
     listen       80;
-    server_name  blog.dicebot.lv;
+    server_name  blog.example.com;
     charset      utf-8;
     
-    return 301 https://blog.dicebot.lv$request_uri;
+    return 301 https://blog.example.com$request_uri;
 }
 
 
 server {
     listen       443 ssl;
-    server_name  blog.dicebot.lv;
+    server_name  blog.example.com;
     charset      utf-8;
 
-    ssl_certificate      /home/dicebot/devel/mood/certs/blog.crt;
-    ssl_certificate_key  /home/dicebot/devel/mood/certs/blog.key;
+    ssl_certificate      /path/to/blog.crt;
+    ssl_certificate_key  /path/to/blog.key;
 
     location / {
         proxy_set_header        Host $host;
