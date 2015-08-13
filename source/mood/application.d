@@ -70,7 +70,7 @@ class MoodApp
         {
             auto last_posts = this.api.getPosts(MoodViewConfig.sidePanelSize);
             auto posts = this.api.getPosts(n, tag);
-	        res.headers["Content-Type"] = "text/html; charset=UTF-8";
+            res.headers["Content-Type"] = "text/html; charset=UTF-8";
             HTML.renderIndex(res.bodyWriter, posts, last_posts);
         }
 
@@ -93,7 +93,7 @@ class MoodApp
         void renderer(uint n, string tag)
         {
             auto posts = this.api.getPosts(n, tag);
-	        res.headers["Content-Type"] = "text/xml; charset=UTF-8";
+            res.headers["Content-Type"] = "text/xml; charset=UTF-8";
             RSS.renderFeed(res.bodyWriter, posts);
         }
 
