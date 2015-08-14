@@ -40,6 +40,7 @@ void main(string[] args)
 
     auto settings = new HTTPServerSettings;
     settings.port = 8080;
+    settings.options |= HTTPServerOption.distribute;
 
     import vibe.stream.ssl;
     settings.bindAddresses = [ "::1", "127.0.0.1" ];
