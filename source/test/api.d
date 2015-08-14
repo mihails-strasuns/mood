@@ -39,12 +39,12 @@ unittest
     auto month = format("%02d", date.month);
     auto expected_url = format("%s/%s/some_title", year, month);
 
-    auto ret = api.addPost("some title", "content");
+    auto ret = api.addPost("some title", "content", "tag1");
     assert (ret.url == expected_url);
 
     auto entry = api.getPost(year, month, "some_title");
     // avoid figuring out exact timestamp stored
     import std.regex;
     auto md = entry.md.replaceAll(regex(r"Date: .+"), "XXX");
-    assert (md == "<!--\nTitle: some title\nXXX\n-->\ncontent");
+    assert (md == "<!--\nTitle: some title\nXXX\nTags: tag1\n-->\ncontent");
 }
