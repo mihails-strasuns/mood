@@ -76,6 +76,7 @@ class MoodAPI : mood.api.spec.MoodAPI
             Params:
                 raw_title = post title (spaces will be encoded as "_" in the URL)
                 content = post Markdown sources (including metadata as HTML comment)
+                tags = space-separated tag list
 
             Returns:
                 struct with only member field, `url`, containing relative URL added
@@ -84,7 +85,7 @@ class MoodAPI : mood.api.spec.MoodAPI
             Throws:
                 Exception if post with such url/path is already present
         */
-        PostAddingResult addPost(string raw_title, string content)
+        PostAddingResult addPost(string raw_title, string content, string tags)
         {
             import mood.config;
 
@@ -115,9 +116,10 @@ class MoodAPI : mood.api.spec.MoodAPI
             enforce (!existsFile(file));
 
             string markdown = format(
-                "<!--\nTitle: %s\nDate: %s\n-->\n%s",
+                "<!--\nTitle: %s\nDate: %s\nTags: %s\n-->\n%s",
                 raw_title,
                 date.toISOString(),
+                tags,
                 content
             );
 

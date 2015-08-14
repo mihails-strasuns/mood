@@ -36,13 +36,14 @@ interface MoodAPI
         Params:
             title = post title
             content = post Markdown sources (including metadata as HTML comment)
+            tags = space-separated tag list
 
         Returns:
             struct with only member field, `url`, containing relative URL added
             post is available under
     */
     @path("posts")
-    PostAddingResult addPost(string title, string content);
+    PostAddingResult addPost(string title, string content, string tags);
 
     struct PostAddingResult
     {

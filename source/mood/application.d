@@ -144,9 +144,10 @@ class MoodApp
         import std.exception : enforce;
         auto title   = req.form["title"];
         auto content = req.form["content"];
+        auto tags    = req.form["tags"];
         enforce(title.length != 0 && content.length != 0);
 
-        auto url = this.api.addPost(title, content).url;
+        auto url = this.api.addPost(title, content, tags).url;
         res.redirect("/posts/" ~ url);
     }
 

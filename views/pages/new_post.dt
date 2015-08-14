@@ -5,5 +5,6 @@ block inner
         h1 New blog post
         form.newpost(action='/posts', method='post')
             input.Input(type='text', name='title', placeholder='Title')
+            input.Input(type='text', name='tags', placeholder='tag1 tag2 tag3')
             textarea.Input(name='content', placeholder='Content')
             button.Button(type='submit') Post
