@@ -1,3 +1,9 @@
+@media only screen and (max-device-width: 800px) {
+  .Aside {
+    display: none;
+  }
+}
+
 html {
   overflow-y: scroll; }
 
