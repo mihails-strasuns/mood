@@ -95,8 +95,11 @@ class MoodAPI : mood.api.spec.MoodAPI
             import std.array : replace;
             import std.datetime : Clock, SysTime;
             import std.format : format;
-            import std.string : strip;
+            import std.string : strip, lineSplitter, join;
             import std.exception : enforce;
+
+            // normalize line endings to posix ones
+            content = content.lineSplitter.join("\n");
 
             string title = raw_title
                 .replace(" ", "_")
