@@ -434,7 +434,8 @@ private void writeBlock(R)(ref R dst, ref const Block block, LinkRef[string] lin
                         import std.array : join;
 
                         auto pygmentize = pipeShell(
-                            "pygmentize -l " ~ block.language ~ " -f html");
+                            "pygmentize -l " ~ block.language ~
+                                " -f html -O cssclass=Code");
                         foreach (line; block.text)
                             pygmentize.stdin.writeln(line);
                         pygmentize.stdin.flush();
@@ -450,7 +451,7 @@ private void writeBlock(R)(ref R dst, ref const Block block, LinkRef[string] lin
                 // else fall-through to non-pygmented version
             }
 
-            dst.put("<div class=\"hll\"><code><pre>");
+            dst.put("<div class=\"Code\"><code><pre>");
             foreach(ln; block.text){
                 filterHTMLEscape(dst, ln);
                 dst.put("\n");
