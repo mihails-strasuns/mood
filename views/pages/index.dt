@@ -1,16 +1,16 @@
 extends outer
 
 block inner
-  section.Body.Capsule.Articles
-    h1 Le blog
-    include blocks/aside
-    .Content
-      - foreach (post; posts)
-        article.article
-          header
-            h2.title
-              a(href='/posts/!{ post.relative_url }') !{ post.title }
-          .content
-            div !{ post.html_intro }
-          footer
-            .posted !{ post.pretty_date }
+    section.Body.Capsule.Articles
+        h1 Here Be Dragons
+        include blocks/aside
+        .Content
+            - foreach (post; posts)
+                article.article
+                    header
+                        h2.title
+                            a(href='/posts/!{ post.relative_url }') !{ post.title }
+                    .content
+                        div !{ post.html_intro }
+                    footer
+                        .posted !{ post.pretty_date }

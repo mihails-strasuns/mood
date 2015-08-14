@@ -16,6 +16,7 @@ body {
   min-height: 100%; }
 
 a {
+  text-decoration: none;
   color: #ff5722;
   -webkit-transition: color 0.2s ease-in-out;
   transition: color 0.2s ease-in-out; }
@@ -71,6 +72,7 @@ a.Button {
     color: #fff; }
 
 .Header {
+  margin-bottom: 2em;
   min-height: 60px;
   background-color: #009688;
   color: #b2dfdb;

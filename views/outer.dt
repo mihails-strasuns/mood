@@ -1,35 +1,26 @@
 doctype html
 html.no-js(lang='')
-  head
-    meta(charset='utf-8')
-    meta(http-equiv='x-ua-compatible', content='ie=edge')
-    title DLang Blog
-    meta(name='description', content='')
-    meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(href='/css/font-awesome/css/font-awesome.css', rel='stylesheet')
-    link(href='/css/normalize.css', rel='stylesheet')
-    link(href='/css/style.css', rel='stylesheet')
-    link(href='/css/pygments.css', rel='stylesheet')
-  body
-    header.Header
-      .Capsule
-        a.home(href='/')
-          span.fa.fa-home
-        ul.menu
-          li
-            a(href='/?tag=fun')
-              i(class='fa fa-soccer-ball-o')
-              | Fun
-          li
-            a(href='/?tag=work')
-              i(class='fa fa-suitcase')
-              | Work
-        a.login(href='/admin')
-          span.fa.fa-lock
-        .search
-          label.input
-            span.fa.fa-search
-            div
-              input(name='search', type='text')
-    block inner
-    footer.Footer
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='x-ua-compatible', content='ie=edge')
+        title Here Be Dragons
+        meta(name='description', content='')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(href='/css/font-awesome/css/font-awesome.css', rel='stylesheet')
+        link(href='/css/normalize.css', rel='stylesheet')
+        link(href='/css/style.css', rel='stylesheet')
+        link(href='/css/pygments.css', rel='stylesheet')
+    body
+        header.Header
+            .Capsule
+                a.home(href='/')
+                    span.fa.fa-home
+                ul.menu
+                    li
+                        a(href='/?tag=code')
+                            | Programming
+                    li
+                        a(href='/?tag=life')
+                            | Life
+        block inner
+        footer.Footer
