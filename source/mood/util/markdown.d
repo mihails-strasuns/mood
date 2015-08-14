@@ -426,32 +426,36 @@ private void writeBlock(R)(ref R dst, ref const Block block, LinkRef[string] lin
 
             version (MoodWithPygmentize)
             {
-                dst.put("<div class=\"hll\">");
-                {
-                    import std.process;
-                    import std.array : join;
+                if (block.language.length)
+                { 
+                    dst.put("<div class=\"hll\">");
+                    {
+                        import std.process;
+                        import std.array : join;
 
-                    auto pygmentize = pipeShell("pygmentize -l " ~ block.language ~ " -f html");
-                    foreach (line; block.text)
-                        pygmentize.stdin.writeln(line);
-                    pygmentize.stdin.flush();
-                    pygmentize.stdin.close();                    
+                        auto pygmentize = pipeShell(
+                            "pygmentize -l " ~ block.language ~ " -f html");
+                        foreach (line; block.text)
+                            pygmentize.stdin.writeln(line);
+                        pygmentize.stdin.flush();
+                        pygmentize.stdin.close();                    
 
-                    char[] buffer;
-                    while (pygmentize.stdout.readln(buffer) != 0)
-                        dst.put(buffer);
+                        char[] buffer;
+                        while (pygmentize.stdout.readln(buffer) != 0)
+                            dst.put(buffer);
+                    }
+                    dst.put("</div>");
+                    break;
                 }
-                dst.put("</div>");
+                // else fall-through to non-pygmented version
             }
-            else
-            {
-                dst.put("<div class=\"hll\"><code><pre>");
-                foreach(ln; block.text){
-                    filterHTMLEscape(dst, ln);
-                    dst.put("\n");
-                }
-                dst.put("</pre></code></div>");
+
+            dst.put("<div class=\"hll\"><code><pre>");
+            foreach(ln; block.text){
+                filterHTMLEscape(dst, ln);
+                dst.put("\n");
             }
+            dst.put("</pre></code></div>");
             break;
         case BlockType.Quote:
             dst.put("<blockquote>");

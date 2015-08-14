@@ -6,5 +6,5 @@
         "vibe-d": "~>0.7.24"
     },
     "mainSourceFile": "./source/mood/main.d",
-    "versions": ["VibeCustomMain", "MoodWithPygmentize"]
+    "versions": ["VibeCustomMain" ]
 }
