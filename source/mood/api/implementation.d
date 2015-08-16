@@ -7,7 +7,6 @@ import mood.api.spec;
 import vibe.core.log;
 
 public import mood.api.spec : BlogPost;
-
 ///
 class MoodAPI : mood.api.spec.MoodAPI
 {
@@ -51,7 +50,10 @@ class MoodAPI : mood.api.spec.MoodAPI
         */
         BlogPost getPost(string _year, string _month, string _title)
         {
-            import std.format : format;
+            version(DigitalMars)
+                import std.format : format;
+            version(LDC)
+                import std.string : format;
             import vibe.http.common;
 
             auto url = format("%s/%s/%s", _year, _month, _title);
@@ -94,8 +96,17 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             import std.array : replace;
             import std.datetime : Clock, SysTime;
-            import std.format : format;
-            import std.string : strip, lineSplitter, join;
+            pragma(msg,__VERSION__);
+            static if (__VERSION__ < 2067L)
+            {
+                import std.string:format;
+            }
+            else
+            {
+                import std.format : format;
+                import std.string: lineSplitter;
+            }
+            import std.string : strip, join;
             import std.exception : enforce;
 
             // normalize line endings to posix ones
@@ -189,5 +200,150 @@ private void createDirectoryRecursive(Path path)
     {
         createDirectoryRecursive(path.parentPath);
         createDirectory(path);
+    }
+}
+
+static if (__VERSION__ <2067L)
+{
+    import std.string;
+    import std.range;
+    import std.algorithm;
+        auto lineSplitter(KeepTerminator keepTerm = KeepTerminator.no, Range)(Range r)
+    if ((hasSlicing!Range && hasLength!Range) ||
+        isSomeString!Range)
+    {
+        import std.uni : lineSep, paraSep;
+        import std.conv : unsigned;
+
+        static struct Result
+        {
+        private:
+            Range _input;
+            alias IndexType = typeof(unsigned(_input.length));
+            enum IndexType _unComputed = IndexType.max;
+            IndexType iStart = _unComputed;
+            IndexType iEnd = 0;
+            IndexType iNext = 0;
+
+        public:
+            this(Range input)
+            {
+                _input = input;
+            }
+
+            static if (isInfinite!Range)
+            {
+                enum bool empty = false;
+            }
+            else
+            {
+                @property bool empty()
+                {
+                    return iStart == _unComputed && iNext == _input.length;
+                }
+            }
+
+            @property Range front()
+            {
+                if (iStart == _unComputed)
+                {
+                    iStart = iNext;
+                  Loop:
+                    for (IndexType i = iNext; ; ++i)
+                    {
+                        if (i == _input.length)
+                        {
+                            iEnd = i;
+                            iNext = i;
+                            break Loop;
+                        }
+                        switch (_input[i])
+                        {
+                            case '\v', '\f', '\n':
+                                iEnd = i + (keepTerm == KeepTerminator.yes);
+                                iNext = i + 1;
+                                break Loop;
+
+                            case '\r':
+                                if (i + 1 < _input.length && _input[i + 1] == '\n')
+                                {
+                                    iEnd = i + (keepTerm == KeepTerminator.yes) * 2;
+                                    iNext = i + 2;
+                                    break Loop;
+                                }
+                                else
+                                {
+                                    goto case '\n';
+                                }
+
+                            static if (_input[i].sizeof == 1)
+                            {
+                                /* Manually decode:
+                                 *  lineSep is E2 80 A8
+                                 *  paraSep is E2 80 A9
+                                 */
+                                case 0xE2:
+                                    if (i + 2 < _input.length &&
+                                        _input[i + 1] == 0x80 &&
+                                        (_input[i + 2] == 0xA8 || _input[i + 2] == 0xA9)
+                                       )
+                                    {
+                                        iEnd = i + (keepTerm == KeepTerminator.yes) * 3;
+                                        iNext = i + 3;
+                                        break Loop;
+                                    }
+                                    else
+                                        goto default;
+                                /* Manually decode:
+                                *  NEL is C2 85
+                                */
+                                case 0xC2:
+                                    if(i + 1 < _input.length && _input[i + 1] == 0x85)
+                                    {
+                                        iEnd = i + (keepTerm == KeepTerminator.yes) * 2;
+                                        iNext = i + 2;
+                                        break Loop;
+                                    }
+                                    else
+                                        goto default;
+                            }
+                            else
+                            {
+                                case '\u0085':
+                                case lineSep:
+                                case paraSep:
+                                    goto case '\n';
+                            }
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+                return _input[iStart .. iEnd];
+            }
+
+            void popFront()
+            {
+                if (iStart == _unComputed)
+                {
+                    assert(!empty);
+                    front();
+                }
+                iStart = _unComputed;
+            }
+
+            static if (isForwardRange!Range)
+            {
+                @property typeof(this) save()
+                {
+                    auto ret = this;
+                    ret._input = _input.save;
+                    return ret;
+                }
+            }
+        }
+
+        return Result(r);
     }
 }

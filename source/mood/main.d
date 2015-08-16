@@ -39,7 +39,7 @@ void main(string[] args)
     auto app = new MoodApp();
 
     auto settings = new HTTPServerSettings;
-    settings.port = 8080;
+    settings.port = 8081;
     settings.options |= HTTPServerOption.distribute;
 
     import vibe.stream.ssl;
