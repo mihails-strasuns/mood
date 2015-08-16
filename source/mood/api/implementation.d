@@ -7,6 +7,7 @@ import mood.api.spec;
 import vibe.core.log;
 
 public import mood.api.spec : BlogPost;
+
 ///
 class MoodAPI : mood.api.spec.MoodAPI
 {
@@ -50,9 +51,9 @@ class MoodAPI : mood.api.spec.MoodAPI
         */
         BlogPost getPost(string _year, string _month, string _title)
         {
-            version(DigitalMars)
+            static if(__VERSION__>2066L)
                 import std.format : format;
-            version(LDC)
+            else
                 import std.string : format;
             import vibe.http.common;
 
@@ -96,7 +97,6 @@ class MoodAPI : mood.api.spec.MoodAPI
 
             import std.array : replace;
             import std.datetime : Clock, SysTime;
-            pragma(msg,__VERSION__);
             static if (__VERSION__ < 2067L)
             {
                 import std.string:format;
