@@ -3,7 +3,6 @@ Title: In the mood for some releasing
 Date: 20150814T233007.417923
 Tags: code
 -->
-
 TL; DR: [https://github.com/Dicebot/mood](https://github.com/Dicebot/mood)
 
 Lack of self-hosted blog platform that could suit my preferences has been
