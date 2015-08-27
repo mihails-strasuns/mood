@@ -51,7 +51,7 @@ class MoodAPI : mood.api.spec.MoodAPI
         */
         BlogPost getPost(string _year, string _month, string _title)
         {
-            import std.format : format;
+            import std.string : format;
             import vibe.http.common;
 
             auto url = format("%s/%s/%s", _year, _month, _title);
@@ -88,14 +88,14 @@ class MoodAPI : mood.api.spec.MoodAPI
         PostAddingResult addPost(string raw_title, string content, string tags)
         {
             import mood.config;
+            import mood.util.compat;
 
             import vibe.inet.path;
             import vibe.core.file;
 
             import std.array : replace;
             import std.datetime : Clock, SysTime;
-            import std.format : format;
-            import std.string : strip, lineSplitter, join;
+            import std.string;
             import std.exception : enforce;
 
             // normalize line endings to posix ones

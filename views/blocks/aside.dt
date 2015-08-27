@@ -6,7 +6,7 @@ aside.Aside
     | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
   
   .postsByMonth
-    - import std.algorithm, std.datetime;
+    - import std.algorithm, std.datetime, mood.util.compat;
     - foreach (month_group; last_posts.chunkBy!((a, b) => a.created_at.month == b.created_at.month))
       .month
         h4 !{ month_group.front.pretty_month }
