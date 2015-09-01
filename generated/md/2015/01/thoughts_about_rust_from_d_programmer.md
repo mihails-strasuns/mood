@@ -53,7 +53,7 @@ int x = int.max;
 // Error: cannot implicitly convert expression (x) of type int to short
 short y1 = x;
 // OK
-uint y2 = x;</code>
+uint y2 = x;
 ```
 
 Rust code:
