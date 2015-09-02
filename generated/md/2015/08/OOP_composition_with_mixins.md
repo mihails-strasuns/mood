@@ -3,7 +3,7 @@ Title: OOP composition with mixins
 Date: 20150824T155012.494947
 Tags: code
 -->
-Have given a very small talk for a recent [Berlin D
+I gave a very small talk for a recent [Berlin D
 meetup](http://www.meetup.com/Berlin-D-Programmers) about approaches to make
 OOP style designs more robust with tools available in D. Normally I am quite
 quite skeptical about OOP in general and prefer to write code in a mix of
@@ -17,7 +17,7 @@ though.
 ### Common Approach
 
 Looking through existing source of what is called "OOP-style code" you most
-commonly find design evolving about two basic principles:
+commonly find design revolving about two basic principles:
 
 1. Defining reused code in base class methods
 2. Tweaking behavior by overriding some of those methods
@@ -36,7 +36,8 @@ style for a very long time.
 
 This a quote from a famous "Design Patterns" book, still one of most respected
 works about practical application of OOP principles. And of all patterns and
-advises this has been probably least recognized in real projects. Sadly.
+advices this has probably been the least recognized one in real projects.
+Sadly.
 
 There is even a dedicated [wiki page for
 that](https://en.wikipedia.org/wiki/Composition_over_inheritance).
@@ -48,15 +49,15 @@ What makes inheritance-driven code reuse bad?
    see a class named "SomethingBase" in your code, this is a clear sign
    something has gone wrong.
 2. It doesn't naturally scale unless your language allows multiple class
-   inheritance (which will cause you suffer for other reasons). Adding
+   inheritance (which will cause you suffering for other reasons). Adding
    new reusable utilities to derived classes becomes impossible without
    refactoring whole involved class hierarchy.
-3. Much less flexible than it may seem from a simple cases. You are
+3. Much less flexible than it may seem from simple cases. You are
    inherently limited to only overriding methods that are not final and
-   which have been defined as a distinct separate methods from the very
-   beginning. If base class author was not good enough at predicting all
-   use cases (and nobody is perfect), you are pretty much doomed into
-   lot of copy-paste.
+   which have been defined as distinct separate methods from the very
+   beginning. If the base class author was not good enough at predicting
+   all use cases (and nobody is perfect), you are pretty much doomed
+   into a lot of copy-paste.
 
 Sadly, those issues tend to only come up when applications reach maintenance
 cycle when reconsidering is not really an option anymore. Which starts a usual
@@ -68,25 +69,25 @@ complicated hierarchies people so commonly associate with OOP.
 Composition is an alternative approach for code reuse which implies that you
 define necessary utilities as small independent objects (as small as possible)
 and embed them within target class as building blocks, usually as private
-fields. Thus the name - programmer is supposed to compose such blocks into any
-set of features target class needs.
+fields. Thus the name -- the programmer is supposed to compose such blocks into
+any set of features the target class needs.
 
-I have a feeling that one of reasons old advice of GoF was ignored so often in
-mainstream languages is that those simply don't provide any useful tools to
-minimize involved boilerplate. Fortunately, D has something to offer here:
+I have a feeling that one of reasons the old advice of GoF was ignored so often
+in mainstream languages is that those simply don't provide any useful tools to
+minimize the involved boilerplate. Fortunately, D has something to offer here:
 
 - [alias this](http://dlang.org/class.html#alias-this)
 - [opDispatch](http://dlang.org/operatoroverloading.html#dispatch)
 - [template mixins](http://dlang.org/template-mixin.html) (topic of this article)
 
-Will focus on template mixins here because it is a tool also available in D1
+I will focus on template mixins here because it is a tool also available in D1
 and thus more applicable to my daily job :)
 
 ## Practice
 
 ### Template Mixins : Basics
 
-Essentially template mixins are about more hygienic and controlled way to copy
+Essentially template mixins are a more hygienic and controlled way to copy
 declarations:
 
 ```D
@@ -103,8 +104,8 @@ class C
 static assert (is(typeof(C.var) == int));
 ```
 
-(declaring template as `mixin template` is not necessarily but useful to
-explain usage intentions)
+(declaring the template as a mixin template is not necessary but it's useful to
+convey the usage intentions)
 
 To resolve naming conflicts, one can use named mixins:
 
@@ -119,13 +120,13 @@ static assert (is(typeof(C.var) == int));
 ```
 
 Usage of named mixins is highly recommended because, as you can see from this
-example, in absence of name conflicts, "short" version also works - thus you
-don't lose anything but make code more forward-compatible if new fields get
-added later.
+example, in the absence of name conflict, "short" version also works - thus you
+don't lose anything but it makes the code more forward-compatible if new fields
+get added later.
 
 ### Template Mixins : Alias
 
-However what makes template mixins truly shine as composition tool is the
+However what makes template mixins truly shine as a composition tool is the
 [template alias
 parameter](http://dlang.org/template.html#TemplateAliasParameter).
 
@@ -157,8 +158,8 @@ static assert (isInputRange!C);
 `alias` parameter is how D does "pass by name" semantics. All template
 arguments must be compile-time entities so you can't pass `secret_array` itself
 like that as it is a field of runtime object. Yet you can pass its symbol name
-and `alias` will make use of context pointer to resolve a field for a proper
-object, acting as certain form of a delegate.
+and `alias` will make use the of context pointer to resolve a field for a
+proper object, acting as certain form of a delegate.
 
 Of course you could just drop any parameters completely and use
 `this.secret_array` directly - as whole mixin body gets pasted into the
@@ -166,12 +167,12 @@ aggregate, it would resolve properly.  However, this a terrible coding style I
 heavily discourage from, one that will make your code completely
 unmaintainable.
 
-Beauty of `alias` parameter is that allows to define generic reusable building
-blocks that hold no silent assumptions about their mixin context - all
-dependencies can be expressed explicitly and have full compile-time
-verification with nice error messages from `static assert`.
+The beauty of `alias` parameters is that they allow you to define generic
+reusable building blocks that hold no silent assumptions about their mixin
+context - all dependencies can be expressed explicitly and have full
+compile-time verification with nice error messages from `static assert`.
 
-Main limitation of this feature is that right now it is limited to only one
+The main limitation of this feature is that right now it is limited to only one
 context pointer and is sometimes not smart enough to recognize transitivity:
 
 ```D
@@ -189,11 +190,11 @@ class C
 
 ### Design Principles
 
-With above-mentioned features in mind I suggest following design principles
+With the above-mentioned features in mind I suggest following design principles
 when doing composition-driven OOP with D programming language: 
 
 - provide reusable functionality as a small building blocks
-- define all expectation for the mixin context via template parameters
+- define all expectations for the mixin context via template parameters
 - `static assert` a lot (including `typeof(this)` verification)
 - compose actual classes from those building blocks as necessary
 - reserve inheritance to useful abstractions
@@ -201,11 +202,11 @@ when doing composition-driven OOP with D programming language:
 ### Primary Candidate : Exceptions
 
 Exceptions have their own hierarchy which, once defined, is almost impossible
-to change without major code breakage (on catching side).
+to change without major code breakage (on the catching side).
 
 That makes reusing code by inheritance simply impossible. For example, we often
-need exceptions that build messages in persistent mutable buffer (to avoid GC
-allocations each time) and this quite a bunch of fields and methods to copy:
+need exceptions that build messages in a persistent mutable buffer (to avoid GC
+allocations each time) and this is quite a bunch of fields and methods to copy:
 
 ```D
 class MyException : IOException
@@ -214,7 +215,7 @@ class MyException : IOException
 }
 ```
 
-Yet mixins make it trivial without compromising existing exception
+Yet mixins make it trivial without compromising the existing exception
 hierarchy.
 
 ### "override"
@@ -248,8 +249,9 @@ as with using `super` when overriding.
 
 #### reimplementing
 
-If provided building blocks are small enough, most simple approach is to not
-mixin at all and provide own implementation of method with same signature:
+If the provided building blocks are small enough, the simplest approach is to
+not mixin at all and provide your own implementation of method with same
+signature:
 
 ```D
 struct S1
@@ -265,7 +267,7 @@ struct S2
 }
 ```
 
-This is better suited for cases when mixed in functionality is mostly
+This is better suited for cases when the mixed in functionality is mostly
 unrelated.
 
 ## Abrupt Ending 
