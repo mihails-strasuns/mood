@@ -8,7 +8,7 @@ import vibe.data.json;
 import mood.config;
 
 ///
-@rootPath("/api/")
+@path("/api/")
 interface MoodAPI
 {
     /**
