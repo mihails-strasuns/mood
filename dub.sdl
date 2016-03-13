@@ -1,0 +1,8 @@
+name "mood"
+description "KISS blog service implementation tuned for programmers"
+authors "Dicebot" "virtulis"
+
+mainSourceFile "./source/mood/main.d"
+versions "VibeCustomMain"
+
+dependency "vibe-d" version="~>0.7.28"
