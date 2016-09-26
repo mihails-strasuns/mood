@@ -11,7 +11,7 @@ import vibe.templ.diet;
 
 /**
     Renders index page with a post feed
-    
+
     Params:
         output = stream to write rendered html to
         posts = main blog post feed
@@ -20,12 +20,15 @@ import vibe.templ.diet;
 void renderIndex(OutputStream output, const BlogPost[] posts,
     const BlogPost[] last_posts)
 {
-    parseDietFile!("pages/index.dt", posts, last_posts)(output);
+    static if (isCompileDefined)
+        compileDietFile!("pages/index.dt", posts, last_posts)(output);
+    else
+        parseDietFile!("pages/index.dt", posts, last_posts)(output);
 }
 
 /**
     Renders page with full content for a specific blog post
-    
+
     Params:
         output = stream to write rendered html to
         post = the one
@@ -34,5 +37,11 @@ void renderIndex(OutputStream output, const BlogPost[] posts,
 void renderSinglePost(OutputStream output, const ref BlogPost post,
     const BlogPost[] last_posts)
 {
-    parseDietFile!("pages/single_post.dt", post, last_posts)(output);
+    static if (isCompileDefined)
+        compileDietFile!("pages/single_post.dt", post, last_posts)(output);
+    else
+        parseDietFile!("pages/single_post.dt", post, last_posts)(output);
 }
+
+// parseDietFile was removed in 0.7.29
+private enum isCompileDefined = is(typeof(compileDietFile));
