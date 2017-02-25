@@ -27,10 +27,10 @@ to me because of various minor issues:
   commits as red or green and that is pretty much it
 - No way to provide own hardware as test slave if system limits become an issue
 
-And when I started to play with [GitLab](gitlab.com) and CI system it provides
+And when I started to play with [GitLab](https://gitlab.com) and CI system it provides
 out of the box I have immediately fallen in love with it. It starts working
 automatically as soon as `.gitlab-ci.yml` file is pushed to the branch and uses
-[Docker](docker.com) as a base for test runners. And test results are integrated
+[Docker](https://docker.com) as a base for test runners. And test results are integrated
 into GitLab project UI. Pretty nice.
 
 Let's have a closer look!
@@ -68,7 +68,7 @@ command and if it returns exit code 0, the pipeline succeeds.
 `image` defines base docker image to use for testing and that is the beauty of
 GitLab approach that makes setting up even very complex CI environment so
 easy. The name can be any valid image name from the [docker
-registry](hub.docker.com), including one you have created and pushed yourself.
+registry](https://hub.docker.com), including one you have created and pushed yourself.
 That allows to prepare arbitrary system on your development machine, install any
 required packages and tools, make sure it works for tested project and simply
 commit/push it after, knowing that CI will run with the exactly same system.
@@ -148,7 +148,7 @@ have never got to work on nice styling.
 ## More dependencies
 
 To run API tests I need MPD server running and original C library to link
-against. My test image is based on [Arch Linux](archlinux.org) thus new packages
+against. My test image is based on [Arch Linux](https://archlinux.org) thus new packages
 can be added with `pacman`:
 
 ```
