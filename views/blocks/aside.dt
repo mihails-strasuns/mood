@@ -6,6 +6,7 @@ aside.Aside
     | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque orci aliquet tortor suscipit, eget eleifend eros placerat. Maecenas elit dui, dignissim id ultrices a, facilisis eu purus.
   
   .postsByMonth
+    - static if (__VERSION__<2067L) import mood.chunkby;
     - import std.algorithm, std.datetime;
     - foreach (month_group; last_posts.chunkBy!((a, b) => a.created_at.month == b.created_at.month))
       .month
