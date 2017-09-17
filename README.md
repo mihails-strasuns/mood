@@ -1,3 +1,6 @@
+NB: This project is not developed anymore, only maintained to keep compiling
+with recent DMD releases.
+
 # MOOD
 KISS blog implementation in D tuned for programmers
 
