@@ -7,8 +7,6 @@ else:
 import mood.config;
 import mood.application;
 
-import mood.util.route_attr;
-
 import vibe.core.core;
 import vibe.core.log;
 
@@ -62,7 +60,7 @@ void main(string[] args)
 
     // "real" request handlers
     router.registerRestInterface(app.API());
-    router.register(app, auth_dg);
+    router.registerWebApp(app, auth_dg);
     // by default serve post feed
     router.get("/", &app.lastBlogPosts);
     // anything unhandled should be checked for presence in statics folder

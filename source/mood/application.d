@@ -10,8 +10,6 @@ module mood.application;
 import vibe.core.log;
 import vibe.web.common;
 
-import mood.util.route_attr;
-
 /**
     Application data type
  */
@@ -132,37 +130,6 @@ class MoodApp
         }
     }
 
-    /**
-        Processes POST request with a form data for adding new post
-
-        After gathering necessary data processing is forwarded to REST API
-        implementation
-     */
-    @path("/posts") @method(HTTPMethod.POST) @auth
-    void processNewBlogPost(HTTPServerRequest req, HTTPServerResponse res)
-    {
-        import std.exception : enforce;
-        auto title   = req.form["title"];
-        auto content = req.form["content"];
-        auto tags    = req.form["tags"];
-        enforce(title.length != 0 && content.length != 0);
-
-        auto url = this.api.addPost(title, content, tags).url;
-        res.redirect("/posts/" ~ url);
-    }
-
-    /**
-        Renders privileged access page which serves as entry point for any
-        modifications of blog data via web interfaces
-
-        Currently only allows adding new posts
-     */
-    @path("/admin") @method(HTTPMethod.GET) @auth
-    void administration(HTTPServerRequest req, HTTPServerResponse res)
-    {
-        res.render!("pages/new_post.dt");
-    }
-
     private void feedOptionsFromRequest(HTTPServerRequest req,
         void delegate (uint n, string tag) renderer)
     {
@@ -199,15 +166,5 @@ unittest
     // best approach to testing is yet unclear
     // only check that nothing gets thrown for empty request
     app.lastBlogPosts(req, res);
-
     app.singleBlogPost(req, res);
-
-    // disabled for now because it does I/O
-    /*
-    req.form["title"] = "aaa";
-    req.form["content"] = "bbb";
-    app.processNewBlogPost(req, res);
-    */
-
-    app.administration(req, res);
 }
