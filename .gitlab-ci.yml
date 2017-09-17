@@ -1,0 +1,9 @@
+image: mstrasuns/ubuntu-d-apt:latest
+
+before_script:
+    - apt install -y libevent-dev libssl-dev pandoc
+    - apt install -y dmd-bin dub
+
+test:
+    script:
+        - dub test
