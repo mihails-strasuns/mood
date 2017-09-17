@@ -5,4 +5,5 @@ authors "Dicebot" "virtulis"
 mainSourceFile "./source/mood/main.d"
 versions "VibeCustomMain"
 
-dependency "vibe-d" version="~>0.7.28"
+dependency "vibe-d" version="~>0.8"
+dependency "diet-ng" version="~>1.4"

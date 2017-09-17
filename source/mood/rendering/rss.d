@@ -7,11 +7,10 @@ module mood.rendering.rss;
 import mood.api.spec;
 
 import vibe.core.stream;
-import vibe.templ.diet;
 
 /**
     Renders RSS post feed
-    
+
     Params:
         output = stream to write xml to
         posts = main blog post feed
@@ -35,7 +34,7 @@ void renderFeed(OutputStream output, const BlogPost[] posts)
     import std.algorithm : map;
     import std.range : join;
     auto feed = posts.map!genItem.join();
-      
+
     auto xml = format(
         // feed data
         "<?xml version='1.0' encoding='UTF-8' ?><rss version='2.0'>\n"

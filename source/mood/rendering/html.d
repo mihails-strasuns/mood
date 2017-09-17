@@ -7,7 +7,8 @@ module mood.rendering.html;
 import mood.api.spec;
 
 import vibe.core.stream;
-import vibe.templ.diet;
+import vibe.stream.wrapper;
+import diet.html;
 
 /**
     Renders index page with a post feed
@@ -20,10 +21,8 @@ import vibe.templ.diet;
 void renderIndex(OutputStream output, const BlogPost[] posts,
     const BlogPost[] last_posts)
 {
-    static if (isCompileDefined)
-        compileDietFile!("pages/index.dt", posts, last_posts)(output);
-    else
-        parseDietFile!("pages/index.dt", posts, last_posts)(output);
+    auto or = streamOutputRange(output);
+    or.compileHTMLDietFile!("pages/index.dt", posts, last_posts);
 }
 
 /**
@@ -37,11 +36,6 @@ void renderIndex(OutputStream output, const BlogPost[] posts,
 void renderSinglePost(OutputStream output, const ref BlogPost post,
     const BlogPost[] last_posts)
 {
-    static if (isCompileDefined)
-        compileDietFile!("pages/single_post.dt", post, last_posts)(output);
-    else
-        parseDietFile!("pages/single_post.dt", post, last_posts)(output);
+    auto or = streamOutputRange(output);
+    or.compileHTMLDietFile!("pages/single_post.dt", post, last_posts);
 }
-
-// parseDietFile was removed in 0.7.29
-private enum isCompileDefined = is(typeof(compileDietFile));

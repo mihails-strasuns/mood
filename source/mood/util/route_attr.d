@@ -10,7 +10,9 @@
  */
 module mood.util.route_attr;
 
-import vibe.http.router; // : URLRouter
+import vibe.http.router : URLRouter;
+import vibe.http.server;
+import vibe.web.common;
 
 /**
     Finds all methods of class T that have `@path` attribute attached

@@ -58,7 +58,7 @@ class MoodApp
 
         Each post is rendered in form of short summary and link to dedicated
         post page.
-        
+
         Query parameters:
             n = controls how many posts to render on this page
             tag = show only posts that have this specified tag
@@ -193,7 +193,7 @@ unittest
 
     auto app = new MoodApp;
     auto req = createTestHTTPServerRequest(URL("/posts"), HTTPMethod.GET);
-    auto res_stream = new MemoryOutputStream;
+    auto res_stream = createMemoryOutputStream();
     auto res = createTestHTTPServerResponse(res_stream);
 
     // best approach to testing is yet unclear

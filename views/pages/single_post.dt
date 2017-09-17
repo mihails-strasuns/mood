@@ -4,5 +4,4 @@ block inner
     section.Body.Capsule.Article
         h1 !{ post.title }
         include blocks/aside
-        .Content
-            !{ post.html_full }
+        div.Content !{ post.html_full }
