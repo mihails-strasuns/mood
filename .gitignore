@@ -2,7 +2,7 @@
 /dub.selections.json
 /mood
 /certs
-__test_library__
+mood-test-library
 *.swp
 *.iml
 .idea

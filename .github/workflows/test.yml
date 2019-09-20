@@ -1,0 +1,23 @@
+name: Test
+on:
+    pull_request:
+    schedule:
+        - cron: '* 0 * * *'
+
+jobs:
+    test:
+        name: Make sure it builds
+        strategy:
+            matrix:
+                os: [ubuntu-latest]
+                dc: [ldc-latest, dmd-latest]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@master
+
+            - uses: mihails-strasuns/setup-dlang@v0
+              with:
+                  compiler: ${{ matrix.dc }}
+
+            - run: dub build
+            - run: dub test

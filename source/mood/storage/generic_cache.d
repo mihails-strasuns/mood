@@ -79,7 +79,7 @@ struct CacheData(TEntry)
 {
     static assert (is(typeof(TEntry.create(string.init, string.init)) == TEntry));
 
-    import vibe.inet.path : Path;
+    import vibe.inet.path : NativePath;
 
     /// Mapping of relative URL (also relative file path on disk) to raw data
     TEntry[string] entries;
@@ -136,7 +136,7 @@ struct CacheData(TEntry)
         Returns:
             pointer to immutable cache filled with data
      */
-    static Cache!TEntry loadFromDisk(Path root_path, string ext)
+    static Cache!TEntry loadFromDisk(NativePath root_path, string ext)
     {
         import std.file;
         import std.path : relativePath, absolutePath;

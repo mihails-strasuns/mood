@@ -23,7 +23,7 @@ class MoodAPI : mood.api.spec.MoodAPI
         {
             logInfo("Preparing blog post data");
 
-            auto markdown_sources = Path(MoodPathConfig.markdownSources);
+            auto markdown_sources = NativePath(MoodPathConfig.markdownSources);
             logInfo("Looking for blog post sources at %s", markdown_sources);
             this.storage.loadFromDisk(markdown_sources);
             logInfo("%s posts loaded", this.storage.posts_by_url.length);
@@ -111,11 +111,11 @@ class MoodAPI : mood.api.spec.MoodAPI
                 date.year,
                 date.month,
             );
-            auto target_dir = Path(MoodPathConfig.markdownSources ~ prefix);
+            auto target_dir = NativePath(MoodPathConfig.markdownSources ~ prefix);
 
             createDirectoryRecursive(target_dir);
 
-            auto file = target_dir ~ Path(title ~ ".md");
+            auto file = target_dir ~ NativePath(title ~ ".md");
             enforce (!existsFile(file));
 
             string markdown = format(
@@ -183,7 +183,7 @@ import vibe.inet.path;
 
 // simple utility wrapper missing in vibe.d
 // differs from Phobos version by using vibe.d async I/O primitives
-private void createDirectoryRecursive(Path path)
+private void createDirectoryRecursive(NativePath path)
 {
     if (!existsFile(path))
     {

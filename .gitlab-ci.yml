@@ -1,9 +1,0 @@
-image: mstrasuns/ubuntu-dlang:2.078.0
-
-before_script:
-    - apt update
-    - apt install -y libevent-dev libssl-dev pandoc
-
-test:
-    script:
-        - dub test

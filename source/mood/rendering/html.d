@@ -6,7 +6,7 @@ module mood.rendering.html;
 
 import mood.api.spec;
 
-import vibe.core.stream;
+import vibe.http.server;
 import vibe.stream.wrapper;
 import diet.html;
 
@@ -18,8 +18,8 @@ import diet.html;
         posts = main blog post feed
         last_posts = list of last posts to display links to in side block
  */
-void renderIndex(OutputStream output, const BlogPost[] posts,
-    const BlogPost[] last_posts)
+void renderIndex(typeof(HTTPServerResponse.bodyWriter) output,
+    const BlogPost[] posts, const BlogPost[] last_posts)
 {
     auto or = streamOutputRange(output);
     or.compileHTMLDietFile!("pages/index.dt", posts, last_posts);
@@ -33,8 +33,8 @@ void renderIndex(OutputStream output, const BlogPost[] posts,
         post = the one
         last_posts = list of last posts to display links to in side block
  */
-void renderSinglePost(OutputStream output, const ref BlogPost post,
-    const BlogPost[] last_posts)
+void renderSinglePost(typeof(HTTPServerResponse.bodyWriter) output,
+    const ref BlogPost post, const BlogPost[] last_posts)
 {
     auto or = streamOutputRange(output);
     or.compileHTMLDietFile!("pages/single_post.dt", post, last_posts);
