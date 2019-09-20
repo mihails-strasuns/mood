@@ -15,7 +15,7 @@ import mood.storage.generic_cache;
     Used as a cache element. `BlogPostStorage` will call `CachedBlogPost.create`
     when loading dumped blog post data from disk to interpret it in
     meaningful way
-    
+
     All non-static methods must be defined to work on const `this`
  */
 struct CachedBlogPost
@@ -113,7 +113,7 @@ struct CachedBlogPost
  */
 struct BlogPostStorage
 {
-    import vibe.inet.path : Path;
+    import vibe.inet.path : NativePath;
     import std.algorithm : sort, map;
 
     private:
@@ -150,7 +150,7 @@ struct BlogPostStorage
             Returns:
                 this
          */
-        ref typeof(this) add(string key, string data) 
+        ref typeof(this) add(string key, string data)
         {
             this.cache.replaceWith(this.cache.add(key, data));
             this.reindexCache();
@@ -164,7 +164,7 @@ struct BlogPostStorage
             Params:
                 root_path = directory where all .md files are stored
          */
-        void loadFromDisk(Path root_path)
+        void loadFromDisk(NativePath root_path)
         {
             this.cache.replaceWith(this.cache.loadFromDisk(root_path, ".md"));
             this.reindexCache();

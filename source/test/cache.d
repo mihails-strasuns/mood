@@ -24,7 +24,7 @@ unittest
     // most common workflow
 
     BlogPostStorage cache;
-    cache.loadFromDisk(Path(test_dir));
+    cache.loadFromDisk(NativePath(test_dir));
 
     assert (cache.posts_by_url["url1/nested/article"].md == "# a");
     assert (cache.posts_by_url["url1/nested/article"].html_full == "<h1> a</h1>\n");
@@ -34,12 +34,12 @@ unittest
 
     // missing cache dump on disk
 
-    cache.loadFromDisk(Path("/unlikely/to/exist"));
+    cache.loadFromDisk(NativePath("/unlikely/to/exist"));
     assert (cache.posts_by_url.length == 0);
 
     // relative base path
 
-    auto relpath = Path(relativePath(test_dir, getcwd()));
+    auto relpath = NativePath(relativePath(test_dir, getcwd()));
     cache.loadFromDisk(relpath);
     assert (cache.posts_by_url.length == 2);
 }

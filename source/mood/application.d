@@ -8,6 +8,7 @@
 module mood.application;
 
 import vibe.core.log;
+import mood.api.spec;
 import vibe.web.common;
 
 /**
@@ -16,10 +17,9 @@ import vibe.web.common;
 class MoodApp
 {
     import vibe.http.server;
-    import vibe.inet.path : Path;
+    import vibe.inet.path : NativePath;
 
     import mood.config;
-    import mood.api.implementation;
     import HTML = mood.rendering.html;
     import RSS = mood.rendering.rss;
 
@@ -29,26 +29,10 @@ class MoodApp
         Creates application instance and initializes it from
         the disk data if present
      */
-    this()
+    this(MoodAPI api)
     {
-        this.api = new MoodAPI;
-    }
-
-    unittest
-    {
-        auto app = new MoodApp;
-        assert (app.api !is null);
-    }
-
-    /**
-        Requests that don't need rendering are served by RESTful API object
-
-        Returns:
-            RESTful API object used by this application renderers
-     */
-    MoodAPI API()
-    {
-        return this.api;
+        assert(api);
+        this.api = api;
     }
 
     /**
@@ -157,8 +141,10 @@ unittest
     import vibe.http.server;
     import vibe.inet.url;
     import vibe.stream.memory;
+    import mood.api.implementation;
 
-    auto app = new MoodApp;
+    auto api = new MoodAPI;
+    auto app = new MoodApp(api);
     auto req = createTestHTTPServerRequest(URL("/posts"), HTTPMethod.GET);
     auto res_stream = createMemoryOutputStream();
     auto res = createTestHTTPServerResponse(res_stream);

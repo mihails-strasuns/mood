@@ -6,7 +6,7 @@ module mood.rendering.rss;
 
 import mood.api.spec;
 
-import vibe.core.stream;
+import vibe.http.server;
 
 /**
     Renders RSS post feed
@@ -15,7 +15,7 @@ import vibe.core.stream;
         output = stream to write xml to
         posts = main blog post feed
  */
-void renderFeed(OutputStream output, const BlogPost[] posts)
+void renderFeed(typeof(HTTPServerResponse.bodyWriter) output, const BlogPost[] posts)
 {
     import std.string : format;
 

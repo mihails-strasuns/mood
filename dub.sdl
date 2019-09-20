@@ -6,4 +6,7 @@ mainSourceFile "./source/mood/main.d"
 versions "VibeCustomMain"
 
 dependency "vibe-d" version="~>0.8"
-dependency "diet-ng" version="~>1.4"
+dependency "diet-ng" version="~>1"
+
+dependency "vibe-d:tls" version="~>0.8"
+subConfiguration "vibe-d:tls" "openssl-1.0"
