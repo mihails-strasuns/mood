@@ -1,8 +1,9 @@
 NB: This project is not developed anymore, only maintained to keep compiling
-with recent DMD releases.
+with recent DMD releases. It can be still useful as an example/reference of
+doing some basic web with D + vibe.d.
 
 # MOOD
-KISS blog implementation in D tuned for programmers
+PoC blog implementation in D + vibe.d
 
 Based on http://vibed.org
 
