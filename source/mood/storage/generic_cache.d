@@ -17,24 +17,26 @@ struct Cache(TEntry)
     shared immutable(CacheData!TEntry)* data = new CacheData!TEntry;
     alias data this;
 
-    /// Updates cache pointer in a thread-safe manner
+    /// Updates cache pointer
+    ///
+    /// Was supposed to use an atomic operation but doesn't compile since
+    /// DMD 2.089 anymore while plain assignment somehow works. I don't
+    /// want to know.
     void replaceWith(Cache!TEntry new_cache)
     {
         this.replaceWith(new_cache.data);
     }
 
     /// ditto
-    void replaceWith(immutable(CacheData!TEntry)* new_data)
+    void replaceWith(shared immutable(CacheData!TEntry)* new_data)
     {
-        import core.atomic;
-        atomicStore(this.data, new_data);
+        this.data = new_data;
     }
 
     /// remove all entries
     void removeAll()
     {
-        import core.atomic;
-        atomicStore(this.data, new immutable CacheData!TEntry);
+        this.data = new immutable CacheData!TEntry;
     }
 }
 
