@@ -29,6 +29,7 @@ class MoodApp
         Creates application instance and initializes it from
         the disk data if present
      */
+    @noRoute
     this(MoodAPI api)
     {
         assert(api);
